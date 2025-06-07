@@ -1,68 +1,94 @@
 #include "Grafo.h"
 
-
-Grafo::Grafo() {
+Grafo::Grafo()
+{
+    ordem = 0;
+    in_direcionado = false;
+    in_ponderado_aresta = false;
+    in_ponderado_vertice = false;
 }
 
-Grafo::~Grafo() {
+Grafo::Grafo(int ordem, bool direcionado, bool ponderado_aresta, bool ponderado_vertice)
+{
+    this->ordem = ordem;
+    this->in_direcionado = direcionado;
+    this->in_ponderado_aresta = ponderado_aresta;
+    this->in_ponderado_vertice = ponderado_vertice;
+    lista_adj.resize(ordem);
 }
 
-vector<char> Grafo::fecho_transitivo_direto(int id_no) {
-    cout<<"Metodo nao implementado"<<endl;
+Grafo::~Grafo()
+{
+}
+
+vector<char> Grafo::fecho_transitivo_direto(int id_no)
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::fecho_transitivo_indireto(int id_no)
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b)
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b)
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
-    cout<<"Metodo nao implementado"<<endl;
+Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
+{
+    cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-Grafo * Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
-    cout<<"Metodo nao implementado"<<endl;
+Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
+{
+    cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-Grafo * Grafo::arvore_caminhamento_profundidade(int id_no) {
-    cout<<"Metodo nao implementado"<<endl;
+Grafo *Grafo::arvore_caminhamento_profundidade(int id_no)
+{
+    cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-int Grafo::raio() {
-    cout<<"Metodo nao implementado"<<endl;
+int Grafo::raio()
+{
+    cout << "Metodo nao implementado" << endl;
     return 0;
 }
 
-int Grafo::diametro() {
-    cout<<"Metodo nao implementado"<<endl;
+int Grafo::diametro()
+{
+    cout << "Metodo nao implementado" << endl;
     return 0;
 }
 
-vector<char> Grafo::centro() {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::centro()
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::periferia() {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::periferia()
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::vertices_de_articulacao() {
-    cout<<"Metodo nao implementado"<<endl;
+vector<char> Grafo::vertices_de_articulacao()
+{
+    cout << "Metodo nao implementado" << endl;
     return {};
 }

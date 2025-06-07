@@ -285,14 +285,14 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
     }
 
     // Le o cabeçalho do grafo
-    bool direcionado, aresta_ponderada, vertice_ponderado;
-    arquivo >> direcionado >> aresta_ponderada >> vertice_ponderado;
+    bool in_direcionado, in_ponderado_aresta, in_ponderado_vertice;
+    arquivo >> in_direcionado >> in_ponderado_aresta >> in_ponderado_vertice;
 
     int ordem;
     arquivo >> ordem;
 
     // Cria o grafo
-    
+    Grafo *grafo = new Grafo(ordem, in_direcionado, in_ponderado_aresta, in_ponderado_vertice);
 
     arquivo.close();
 }
