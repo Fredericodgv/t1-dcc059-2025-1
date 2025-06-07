@@ -1,11 +1,23 @@
 #include <iostream>
+#include <string>
+#include <fstream>
 #include "Gerenciador.h"
 
 using namespace std;
 int main(int argc, char *argv[])
 {
 
-    Grafo* grafo = new Grafo();
+    if (argc < 2)
+    {
+        cerr << "Uso: " << argv[0] << " <arquivo_de_entrada>" << endl;
+        return 1;
+    }
+
+    Grafo *grafo = new Grafo();
+
+    string nome_arquivo = argv[1];
+
+    grafo = Gerenciador::ler_arquivo(nome_arquivo);
 
     Gerenciador::comandos(grafo);
 
