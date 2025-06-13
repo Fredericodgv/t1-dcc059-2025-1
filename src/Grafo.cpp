@@ -29,7 +29,14 @@ void Grafo::imprimir_lista_adjacencia()
         if (no == nullptr)
             continue;
 
-        cout << no->id << " -> ";
+        // Imprime o ID do nó e, se for ponderado, o peso
+        cout << no->id;
+        if (in_ponderado_vertice)
+        {
+            cout << "(" << no->peso << ")";
+        }
+
+        cout << " -> ";
 
         for (Aresta *aresta : no->arestas)
         {
