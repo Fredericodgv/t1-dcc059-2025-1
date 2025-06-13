@@ -14,11 +14,25 @@ Grafo::Grafo(int ordem, bool direcionado, bool ponderado_aresta, bool ponderado_
     this->in_direcionado = direcionado;
     this->in_ponderado_aresta = ponderado_aresta;
     this->in_ponderado_vertice = ponderado_vertice;
-    lista_adj.resize(ordem);
 }
 
 Grafo::~Grafo()
 {
+}
+
+bool Grafo::adicionar_vertice(char id, int peso)
+{
+    if (ordem < lista_adj.size())
+    {
+        cout << "Grafo cheio, nao e possivel adicionar mais nos." << endl;
+        return false;
+    }
+
+    No *novo_no = new No();
+    novo_no->id = id;
+    novo_no->peso = peso;
+    lista_adj.push_back(novo_no);
+    return true;
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no)

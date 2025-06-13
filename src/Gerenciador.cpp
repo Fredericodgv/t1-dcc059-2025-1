@@ -294,5 +294,20 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
     // Cria o grafo
     Grafo *grafo = new Grafo(ordem, in_direcionado, in_ponderado_aresta, in_ponderado_vertice);
 
+    char id;
+    int peso = 0;
+    // Le os nos do grafo
+    for (int i = 0; i < ordem; ++i)
+    {
+        arquivo >> id;
+        if (in_ponderado_vertice)
+        {
+            arquivo >> peso;
+        }
+
+        // Adiciona o no ao grafo
+        grafo->adicionar_vertice(id, peso);
+    }
+
     arquivo.close();
 }
