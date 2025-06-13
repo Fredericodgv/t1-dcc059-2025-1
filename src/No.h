@@ -15,6 +15,8 @@ public:
     char id;
     int peso;
     vector<Aresta*> arestas;
+
+    bool adicionar_aresta(char id_no_destino, int peso = 0);
 };
 
 

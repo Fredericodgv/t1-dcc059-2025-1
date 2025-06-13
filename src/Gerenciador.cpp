@@ -309,5 +309,29 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
         grafo->adicionar_vertice(id, peso);
     }
 
+    // Le as arestas do grafo
+    char id_no_origem, id_no_destino;
+    int peso_aresta;
+
+    while (arquivo >> id_no_origem >> id_no_destino)
+    {
+        if (in_ponderado_aresta)
+        {
+            arquivo >> peso_aresta;
+        }
+        else
+        {
+            peso_aresta = 0; // Peso padrão se não for ponderado
+        }
+
+        // Adiciona a aresta ao grafo
+        grafo->adicionar_aresta(id_no_origem, id_no_destino, peso_aresta);
+        if (in_direcionado == false)
+        {
+            // Se o grafo não é direcionado, adiciona a aresta na direção oposta
+            grafo->adicionar_aresta(id_no_destino, id_no_origem, peso_aresta);
+        }
+    }
+
     arquivo.close();
 }

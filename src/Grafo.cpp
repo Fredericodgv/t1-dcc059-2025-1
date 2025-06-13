@@ -35,6 +35,41 @@ bool Grafo::adicionar_vertice(char id, int peso)
     return true;
 }
 
+bool Grafo::adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso)
+{
+    No *no_origem = get_no(id_no_origem);
+    No *no_destino = get_no(id_no_destino);
+
+    if (no_origem == nullptr || no_destino == nullptr)
+    {
+        cout << "Um ou ambos os nos nao existem." << endl;
+        return false;
+    }
+
+    if (no_origem->adicionar_aresta(id_no_destino, peso))
+    {
+        if (!in_direcionado)
+        {
+            no_destino->adicionar_aresta(id_no_origem, peso);
+        }
+        return true;
+    }
+    else
+    {
+        cout << "Erro ao adicionar aresta." << endl;
+        return false;
+    }
+}
+
+No* Grafo::get_no(char id) {
+    for (No* no : lista_adj) {
+        if (no->id == id) {
+            return no;
+        }
+    }
+    return nullptr;
+}
+
 vector<char> Grafo::fecho_transitivo_direto(int id_no)
 {
     cout << "Metodo nao implementado" << endl;
