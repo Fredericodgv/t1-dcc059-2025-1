@@ -19,6 +19,8 @@ int main(int argc, char *argv[])
 
     grafo = Gerenciador::ler_arquivo(nome_arquivo);
 
+    grafo->imprimir_lista_adjacencia();
+
     Gerenciador::comandos(grafo);
 
     return 0;

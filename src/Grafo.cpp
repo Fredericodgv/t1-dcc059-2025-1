@@ -20,6 +20,36 @@ Grafo::~Grafo()
 {
 }
 
+void Grafo::imprimir_lista_adjacencia()
+{
+    cout << "Lista de adjacencia:" << endl;
+
+    for (No *no : lista_adj)
+    {
+        if (no == nullptr)
+            continue;
+
+        cout << no->id << " -> ";
+
+        for (Aresta *aresta : no->arestas)
+        {
+            if (aresta == nullptr)
+                continue;
+
+            cout << aresta->id_no_alvo;
+
+            if (in_ponderado_aresta)
+            {
+                cout << "(" << aresta->peso << ")";
+            }
+
+            cout << " ";
+        }
+
+        cout << endl;
+    }
+}
+
 bool Grafo::adicionar_vertice(char id, int peso)
 {
     if (ordem < lista_adj.size())
@@ -61,9 +91,12 @@ bool Grafo::adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int pe
     }
 }
 
-No* Grafo::get_no(char id) {
-    for (No* no : lista_adj) {
-        if (no->id == id) {
+No *Grafo::get_no(char id)
+{
+    for (No *no : lista_adj)
+    {
+        if (no->id == id)
+        {
             return no;
         }
     }

@@ -326,12 +326,9 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
 
         // Adiciona a aresta ao grafo
         grafo->adicionar_aresta_grafo(id_no_origem, id_no_destino, peso_aresta);
-        if (in_direcionado == false)
-        {
-            // Se o grafo não é direcionado, adiciona a aresta na direção oposta
-            grafo->adicionar_aresta_grafo(id_no_destino, id_no_origem, peso_aresta);
-        }
     }
+
+    return grafo;
 
     arquivo.close();
 }
