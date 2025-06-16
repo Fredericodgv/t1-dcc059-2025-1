@@ -6,8 +6,11 @@
 #define GRAFO_H
 
 #include "No.h"
+#include <bits/stdc++.h>
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <limits>
 
 using namespace std;
 class Grafo
@@ -21,6 +24,9 @@ public:
 
     bool adicionar_vertice(char id, int peso = 0);
     bool adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso = 0);
+
+    Aresta* aux_aresta_custo_minimo_grafo(vector<char>* ids_nos, No** u, No** v);
+    Aresta* aux_tem_aresta_para(No* origem, char destino);
 
     No *get_no(char id); // a
 
