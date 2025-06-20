@@ -201,32 +201,34 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 
     Aresta *aresta_inicial = aux_aresta_custo_minimo_grafo(&ids_nos, &u, &v); // pegando aresta inicial
 
+    // adicionando aresta e vertices iniciais no grafo
     arvore_prim->adicionar_vertice(u->id, u->peso);
     arvore_prim->adicionar_vertice(v->id, v->peso);
     arvore_prim->adicionar_aresta_grafo(u->id, v->id, aresta_inicial->peso);
 
-    
-    // e 5 a b c d e 2
-    
-    for (int i = 0; i < ids_nos.size(); i++)
+    // teste:
+    //  e 5 a b c d e 2
+    // inicializando vetor prox
+    for (int i = 0; i < ids_nos.size(); i++) // para cada nó
     {
-        if (ids_nos[i] == u->id || ids_nos[i] == v->id) // se for u ou v apenas seta pra 0
-        { 
+        if (ids_nos[i] == u->id || ids_nos[i] == v->id) // se for u ou v apenas seta id pra 0 e custo pra infinito
+        {
             prox[i] = 0;
             custo[i] = numeric_limits<int>::max();
         }
         else
         {
+            // vê se nó tem aresta para u ou v e pega a de menor peso
             Aresta *aresta_u = aux_tem_aresta_para(get_no(ids_nos[i]), u->id);
             Aresta *menor_aresta = aresta_u;
             Aresta *aresta_v = aux_tem_aresta_para(get_no(ids_nos[i]), v->id);
-            
+
             if (aresta_v->peso < aresta_u->peso)
             {
                 menor_aresta = aresta_v;
             }
-            
-            if (menor_aresta->peso != numeric_limits<int>::max())
+
+            if (menor_aresta->peso != numeric_limits<int>::max()) // apenas considera a aresta válida se o peso não for infinito(existe conexão)
             {
                 prox[i] = menor_aresta->id_no_alvo;
             }
@@ -237,39 +239,35 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
             custo[i] = menor_aresta->peso;
         }
     }
-    
+
     for (int i = 0; i < ids_nos.size() - 2; i++)
     {
-        int idx_aresta_minima = min_element(custo.begin(), custo.end()) - custo.begin(); //pega o indice do menor elemento no vetor
+        // pega o indice do menor elemento no vetor e adiciona vértice e aresta correspondente
+        int idx_aresta_minima = min_element(custo.begin(), custo.end()) - custo.begin();
         arvore_prim->adicionar_vertice(ids_nos[idx_aresta_minima], get_no(ids_nos[idx_aresta_minima])->peso);
         arvore_prim->adicionar_aresta_grafo(ids_nos[idx_aresta_minima], prox[idx_aresta_minima], custo[idx_aresta_minima]);
-        
-        No* no_recem_adicionado = get_no(ids_nos[idx_aresta_minima]);
-        
-        int peso_minimo = numeric_limits<int>::max();
-        char id_peso_minimo;
-        
-        for(int j = 0; j < no_recem_adicionado->arestas.size(); j++){
-            No* novo_no_acessivel = get_no(no_recem_adicionado->arestas[j]->id_no_alvo);
-            Aresta* aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]);
-            
-            if(aresta->peso < peso_minimo){
-                peso_minimo = aresta->peso;
-                id_peso_minimo = novo_no_acessivel->id;
+
+        No *no_recem_adicionado = get_no(ids_nos[idx_aresta_minima]);
+
+        for (int j = 0; j < no_recem_adicionado->arestas.size(); j++)
+        {                                                                                     // para cada aresta do nó adicionado
+            No *novo_no_acessivel = get_no(no_recem_adicionado->arestas[j]->id_no_alvo);      // pega o id alvo
+            Aresta *aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]); // se tem aresta para o grafo resultante
+
+            //pega o prox do novo nó acessível e vê se compensa substituir a aresta
+            int idx_id = find(ids_nos.begin(), ids_nos.end(), novo_no_acessivel->id) - ids_nos.begin();
+            if (aresta->peso < custo[idx_id])
+            {
+                prox[idx_id] = ids_nos[idx_aresta_minima]; // atualiza prox
+                custo[idx_id] = aresta->peso;
             }
         }
-        
-        if(peso_minimo != numeric_limits<int>::max()){
-            int idx_id = find(ids_nos.begin(), ids_nos.end(), id_peso_minimo) - ids_nos.begin();
-            prox[idx_id] = ids_nos[idx_aresta_minima];
-        }
-        
+
         prox[idx_aresta_minima] = 0;
         custo[idx_aresta_minima] = numeric_limits<int>::max();
     }
-    
-    arvore_prim->imprimir_lista_adjacencia();
-    return nullptr;
+
+    return arvore_prim;
 }
 
 Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
