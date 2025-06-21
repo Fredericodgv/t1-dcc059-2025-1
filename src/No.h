@@ -14,6 +14,10 @@ public:
 
     char id;
     int peso;
+    int dijkstra_custo_minimo;
+    bool dijkstra_fechado;
+    char dijkstra_responsavel = 0;
+
     vector<Aresta*> arestas;
 
     bool adicionar_aresta(char id_no_destino, int peso = 0);

@@ -26,7 +26,7 @@ public:
     bool adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso = 0);
 
     Aresta* aux_aresta_custo_minimo_grafo(vector<char>* ids_nos, No** u, No** v);
-    Aresta* aux_tem_aresta_para(No* origem, char destino);
+    void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
     No *get_no(char id); // a
 

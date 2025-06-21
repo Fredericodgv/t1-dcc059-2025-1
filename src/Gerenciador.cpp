@@ -60,8 +60,16 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        
+        cout<<"Caminho: [";
+        for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
+        {
+            cout<<caminho_minimo_dijkstra[i];
+            if(i != caminho_minimo_dijkstra.size()-1)
+                cout<<", ";
+        }
+        cout<<"]"<<endl;
+        
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {

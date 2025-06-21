@@ -122,10 +122,127 @@ vector<char> Grafo::fecho_transitivo_indireto(int id_no)
     return {};
 }
 
+// funções de quicksort pegas na geeksforgeeks
+int partition(vector<No *> &vec, int low, int high)
+{
+
+    // Selecting last element as the pivot
+    int pivot = vec[high]->dijkstra_custo_minimo;
+
+    // Index of elemment just before the last element
+    // It is used for swapping
+    int i = (low - 1);
+
+    for (int j = low; j <= high - 1; j++)
+    {
+
+        // If current element is smaller than or
+        // equal to pivot
+        if (vec[j]->dijkstra_custo_minimo <= pivot)
+        {
+            i++;
+            swap(vec[i], vec[j]);
+        }
+    }
+
+    // Put pivot to its position
+    swap(vec[i + 1], vec[high]);
+
+    // Return the point of partition
+    return (i + 1);
+}
+
+void quicksort_nos_dijkstra(vector<No *> &vec, int low, int high)
+{
+
+    // Base case: This part will be executed till the starting
+    // index low is lesser than the ending index high
+    if (low < high)
+    {
+
+        // pi is Partitioning Index, arr[p] is now at
+        // right place
+        int pi = partition(vec, low, high);
+
+        // Separately sort elements before and after the
+        // Partition Index pi
+        quicksort_nos_dijkstra(vec, low, pi - 1);
+        quicksort_nos_dijkstra(vec, pi + 1, high);
+    }
+}
+
+void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a)
+{
+    No *no_atual = get_no(id_atual);
+    char id_responsavel = no_atual->dijkstra_responsavel;
+    if (id_atual != id_no_a)
+    {
+        aux_retorna_chars_caminho_dijkstra(vec, id_responsavel, id_no_a);
+    }
+
+    vec.push_back(no_atual->id);
+}
+
 vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b)
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return {};
+    }
+
+    vector<char> resultante(0);
+    vector<No *> nos_abertos(0);
+
+    No *no_inicial = get_no(id_no_a);
+    no_inicial->dijkstra_custo_minimo = 0;
+    no_inicial->dijkstra_responsavel = id_no_a;
+    no_inicial->dijkstra_fechado = false;
+
+    nos_abertos.push_back(no_inicial);
+    for (int i = 0; i < lista_adj.size(); i++)
+    {
+        if (lista_adj[i]->id != id_no_a)
+        {
+            nos_abertos.push_back(lista_adj[i]);
+            lista_adj[i]->dijkstra_custo_minimo = numeric_limits<int>::max();
+            lista_adj[i]->dijkstra_responsavel = 0;
+            lista_adj[i]->dijkstra_fechado = false;
+        }
+    }
+
+    // teste: c c b 2
+    for (int i = 0; i < lista_adj.size(); i++)
+    {
+        No *no_custo_minimo = nos_abertos[i];
+        no_custo_minimo->dijkstra_fechado = true;
+
+        if (no_custo_minimo->id == id_no_b)
+        {
+            break;
+        }
+
+        for (int j = 0; j < no_custo_minimo->arestas.size(); j++)
+        {
+            No *no = get_no(no_custo_minimo->arestas[j]->id_no_alvo);
+            int novo_custo = no_custo_minimo->dijkstra_custo_minimo + no_custo_minimo->arestas[j]->peso;
+
+            if (!no->dijkstra_fechado)
+            {
+                if (no->dijkstra_custo_minimo > novo_custo)
+                {
+                    no->dijkstra_custo_minimo = novo_custo;
+                    no->dijkstra_responsavel = no_custo_minimo->id;
+                }
+            }
+        }
+
+        quicksort_nos_dijkstra(nos_abertos, i, nos_abertos.size() - 1);
+    }
+
+    aux_retorna_chars_caminho_dijkstra(resultante, id_no_b, id_no_a);
+
+    return resultante;
 }
 
 vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b)
@@ -156,20 +273,7 @@ Aresta *Grafo::aux_aresta_custo_minimo_grafo(vector<char> *ids_nos, No **u, No *
     return menor_aresta;
 };
 
-/* Aresta* Grafo::aux_menor_aresta_para(char origem, char destino){
-    No* no_origem = get_no(origem);
-    Aresta* menor_aresta = new Aresta();
-    menor_aresta->peso = numeric_limits<int>::max();
-
-    for (int i = 0; i < no_origem->arestas.size(); i++){
-        if(no_origem->arestas[i]->peso < menor_aresta->peso)
-            menor_aresta = no_origem->arestas[i];
-    }
-
-    return menor_aresta;
-}; */
-
-Aresta *Grafo::aux_tem_aresta_para(No *origem, char destino)
+Aresta *aux_tem_aresta_para(No *origem, char destino)
 {
     Aresta *aresta = new Aresta();
     aresta->peso = numeric_limits<int>::max();
@@ -254,7 +358,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
             No *novo_no_acessivel = get_no(no_recem_adicionado->arestas[j]->id_no_alvo);      // pega o id alvo
             Aresta *aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]); // se tem aresta para o grafo resultante
 
-            //pega o prox do novo nó acessível e vê se compensa substituir a aresta
+            // pega o prox do novo nó acessível e vê se compensa substituir a aresta
             int idx_id = find(ids_nos.begin(), ids_nos.end(), novo_no_acessivel->id) - ids_nos.begin();
             if (aresta->peso < custo[idx_id])
             {

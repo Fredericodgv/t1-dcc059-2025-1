@@ -1,0 +1,52 @@
+0 1 1
+20
+A 3
+B 5
+C 2
+D 8
+E 6
+F 1
+G 7
+H 9
+I 4
+J 3
+K 10
+L 6
+M 2
+N 5
+O 8
+P 7
+Q 4
+R 6
+S 9
+T 2
+A B 4
+A C 7
+B D 3
+B E 6
+C F 2
+C G 5
+D H 1
+E I 4
+F J 3
+G K 6
+H L 2
+I M 5
+J N 4
+K O 3
+L P 2
+M Q 6
+N R 7
+O S 1
+P T 5
+Q R 4
+R S 3
+S T 2
+A K 8
+D N 7
+F P 6
+H R 4
+C M 3
+G Q 5
+I S 2
+E O 4
