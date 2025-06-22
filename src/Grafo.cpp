@@ -68,6 +68,7 @@ bool Grafo::adicionar_vertice(char id, int peso)
     No *novo_no = new No();
     novo_no->id = id;
     novo_no->peso = peso;
+    pos_id.insert({id, lista_adj.size()});
     lista_adj.push_back(novo_no);
     return true;
 }
@@ -100,12 +101,9 @@ bool Grafo::adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int pe
 
 No *Grafo::get_no(char id)
 {
-    for (No *no : lista_adj)
-    {
-        if (no->id == id)
-        {
-            return no;
-        }
+    auto it_map = pos_id.find(id);
+    if(it_map != pos_id.end()){
+        return lista_adj[pos_id.find(id)->second];
     }
     return nullptr;
 }

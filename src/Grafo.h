@@ -48,6 +48,7 @@ public:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
+    map<char, unsigned int> pos_id;
 };
 
 #endif // GRAFO_H
