@@ -84,11 +84,11 @@ bool Grafo::adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int pe
         return false;
     }
 
-    if (no_origem->adicionar_aresta(id_no_destino, peso))
+    if (no_origem->adicionar_aresta(id_no_origem, id_no_destino, peso))
     {
         if (!in_direcionado)
         {
-            no_destino->adicionar_aresta(id_no_origem, peso);
+            no_destino->adicionar_aresta(id_no_destino, id_no_origem, peso);
         }
         return true;
     }
@@ -102,7 +102,8 @@ bool Grafo::adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int pe
 No *Grafo::get_no(char id)
 {
     auto it_map = pos_id.find(id);
-    if(it_map != pos_id.end()){
+    if (it_map != pos_id.end())
+    {
         return lista_adj[pos_id.find(id)->second];
     }
     return nullptr;
@@ -372,10 +373,88 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     return arvore_prim;
 }
 
+char find_sets(map<char, char> &parent, char v)
+{
+    if (parent[v] == v)
+        return v;
+    return parent[v] = find_sets(parent, parent[v]);
+}
+
+void unite_sets(map<char, char> &parent, char u, char v)
+{
+    parent[find_sets(parent, u)] = find_sets(parent, v);
+}
+
 Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
 {
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
+    if (!in_ponderado_aresta || in_direcionado)
+    {
+        cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+        return nullptr;
+    }
+
+    vector<Aresta *> arestas_ordenadas;
+
+    // Coletando as arestas, evitando duplicatas
+    for (No *no : lista_adj)
+    {
+        for (Aresta *aresta : no->arestas)
+        {
+            if (in_direcionado || no->id < aresta->id_no_alvo)
+            {
+                arestas_ordenadas.push_back(aresta);
+            }
+        }
+    }
+
+    // Ordenando pelo peso
+    sort(arestas_ordenadas.begin(), arestas_ordenadas.end(),
+         [](Aresta *a, Aresta *b)
+         { return a->peso < b->peso; });
+
+    // Imprime as arestas ordenadas
+    cout << "Arestas ordenadas por peso:" << endl;
+    for (Aresta *aresta : arestas_ordenadas)
+    {
+        cout << "Aresta: " << aresta->id_no_origem << " - " << aresta->id_no_alvo << " | Peso: " << aresta->peso << endl;
+    }
+
+    // Inicializando Union-Find
+    map<char, char> parent;
+    for (char id : ids_nos)
+    {
+        parent[id] = id;
+    }
+
+    // Criar o grafo resultado
+    Grafo *agm = new Grafo(ids_nos.size(), false, true, in_ponderado_vertice);
+
+    // Adiciona os vértices no grafo resultado
+    for (char id : ids_nos)
+    {
+        No *original = get_no(id);
+        int peso_vertice = (original != nullptr) ? original->peso : 0;
+        agm->adicionar_vertice(id, peso_vertice);
+    }
+
+    int arestas_adicionadas = 0;
+    for (Aresta *aresta : arestas_ordenadas)
+    {
+        char u = aresta->id_no_origem;
+        char v = aresta->id_no_alvo;
+
+        if (find_sets(parent, u) != find_sets(parent, v))
+        {
+            agm->adicionar_aresta_grafo(u, v, aresta->peso);
+            unite_sets(parent, u, v);
+            arestas_adicionadas++;
+
+            if (arestas_adicionadas == ids_nos.size() - 1)
+                break; // Árvore geradora mínima completa
+        }
+    }
+
+    return agm;
 }
 
 Grafo *Grafo::arvore_caminhamento_profundidade(int id_no)

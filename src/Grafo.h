@@ -6,6 +6,7 @@
 #define GRAFO_H
 
 #include "No.h"
+#include "Aresta.h"
 #include <bits/stdc++.h>
 #include <iostream>
 #include <vector>
@@ -25,7 +26,7 @@ public:
     bool adicionar_vertice(char id, int peso = 0);
     bool adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso = 0);
 
-    Aresta* aux_aresta_custo_minimo_grafo(vector<char>* ids_nos, No** u, No** v);
+    Aresta *aux_aresta_custo_minimo_grafo(vector<char> *ids_nos, No **u, No **v);
     void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
     No *get_no(char id); // a
@@ -49,6 +50,10 @@ public:
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
     map<char, unsigned int> pos_id;
+
+private:
+    char find_set(map<char, char> &parent, char v);           // Funcao auxiliar para encontrar o representante de um conjunto
+    void union_sets(map<char, char> &parent, char u, char v); // Funcao auxiliar para unir dois conjuntos
 };
 
 #endif // GRAFO_H
