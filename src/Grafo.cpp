@@ -393,14 +393,30 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
         return nullptr;
     }
 
+    // Criar o grafo resultado
+    Grafo *agm = new Grafo(ids_nos.size(), false, true, in_ponderado_vertice);
+
+    // Adiciona os vértices no grafo resultado
+    for (char id : ids_nos)
+    {
+        No *original = get_no(id);
+        int peso_vertice = (original != nullptr) ? original->peso : 0;
+        agm->adicionar_vertice(id, peso_vertice);
+    }
+
     vector<Aresta *> arestas_ordenadas;
 
     // Coletando as arestas, evitando duplicatas
     for (No *no : lista_adj)
     {
-        for (Aresta *aresta : no->arestas)
+        // Verifica se o nó está no subconjunto agm
+        if (agm->get_no(no->id) == nullptr)
+            continue;
+        
+        for (Aresta *aresta : no->arestas )
         {
-            if (in_direcionado || no->id < aresta->id_no_alvo)
+            // verifica se a aresta já existe e se o nó está no subconjunto agm
+            if (no->id < aresta->id_no_alvo && agm->get_no(no->id) != nullptr && agm->get_no(aresta->id_no_alvo) != nullptr)
             {
                 arestas_ordenadas.push_back(aresta);
             }
@@ -424,17 +440,6 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     for (char id : ids_nos)
     {
         parent[id] = id;
-    }
-
-    // Criar o grafo resultado
-    Grafo *agm = new Grafo(ids_nos.size(), false, true, in_ponderado_vertice);
-
-    // Adiciona os vértices no grafo resultado
-    for (char id : ids_nos)
-    {
-        No *original = get_no(id);
-        int peso_vertice = (original != nullptr) ? original->peso : 0;
-        agm->adicionar_vertice(id, peso_vertice);
     }
 
     int arestas_adicionadas = 0;
