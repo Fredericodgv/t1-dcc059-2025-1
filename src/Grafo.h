@@ -6,6 +6,7 @@
 #define GRAFO_H
 
 #include "No.h"
+#include "Aresta.h"
 #include <bits/stdc++.h>
 #include <iostream>
 #include <vector>
@@ -51,6 +52,10 @@ public:
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
     map<char, unsigned int> pos_id;
+
+private:
+    char find_set(map<char, char> &parent, char v);           // Funcao auxiliar para encontrar o representante de um conjunto
+    void union_sets(map<char, char> &parent, char u, char v); // Funcao auxiliar para unir dois conjuntos
 };
 
 #endif // GRAFO_H
