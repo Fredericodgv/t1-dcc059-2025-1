@@ -25,7 +25,9 @@ public:
     bool adicionar_vertice(char id, int peso = 0);
     bool adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso = 0);
 
-    Aresta* aux_aresta_custo_minimo_grafo(vector<char>* ids_nos, No** u, No** v);
+    Grafo *gerar_subgrafo(vector<char> ids_nos);
+    Aresta* aux_aresta_custo_minimo_grafo(Grafo* grafo, vector<char>* ids_nos, No** u, No** v);
+
     void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
     No *get_no(char id); // a

@@ -249,21 +249,21 @@ vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b)
     return {};
 }
 
-Aresta *Grafo::aux_aresta_custo_minimo_grafo(vector<char> *ids_nos, No **u, No **v)
+Aresta *Grafo::aux_aresta_custo_minimo_grafo(Grafo* grafo, vector<char> *ids_nos, No **u, No **v)
 {
     Aresta *menor_aresta = new Aresta();
     menor_aresta->peso = numeric_limits<int>::max();
 
     for (int i = 0; i < ids_nos->size(); i++)
     {
-        No *no_temporario = get_no((*ids_nos)[i]);
+        No *no_temporario = grafo->get_no((*ids_nos)[i]);
         for (int j = 0; j < no_temporario->arestas.size(); j++)
         {
             if (no_temporario->arestas[j]->peso < menor_aresta->peso)
             {
-                menor_aresta = lista_adj[i]->arestas[j];
-                *u = get_no(no_temporario->id);
-                *v = get_no(no_temporario->arestas[j]->id_no_alvo);
+                menor_aresta = grafo->lista_adj[i]->arestas[j];
+                *u = grafo->get_no(no_temporario->id);
+                *v = grafo->get_no(no_temporario->arestas[j]->id_no_alvo);
             }
         }
     }
@@ -285,15 +285,40 @@ Aresta *aux_tem_aresta_para(No *origem, char destino)
     return aresta;
 };
 
+Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos){
+    Grafo *subgrafo = new Grafo(ids_nos.size(), 0, 1, 1);
+
+    for (int i = 0; i < ids_nos.size(); i++){
+        No* no = get_no(ids_nos[i]);
+        subgrafo->adicionar_vertice(no->id, no->peso);
+
+        for(Aresta* aresta: no->arestas){
+            if(find(ids_nos.begin(), ids_nos.end(), aresta->id_no_alvo) != ids_nos.end()){
+                subgrafo->adicionar_aresta_grafo(no->id, aresta->id_no_alvo, aresta->peso);
+            }
+        }
+    }
+
+    return subgrafo;
+}
+
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
     if (!in_ponderado_aresta || in_direcionado)
     {
         cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
     }
+    
+    int arestas_peso_infinito = 0;
+    //grafo com os vértices pedidos
+    Grafo *subgrafo = gerar_subgrafo(ids_nos);
 
     // iniciando grafo resultante
     Grafo *arvore_prim = new Grafo(ids_nos.size(), 0, 1, 1);
+    if(ids_nos.size() < 2){
+        arvore_prim->adicionar_vertice(ids_nos[0], subgrafo->get_no(ids_nos[0])->peso);
+        return arvore_prim;
+    }
 
     // iniciando vetor de prox
     vector<char> prox(ids_nos.size());
@@ -301,7 +326,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     No *u = new No();
     No *v = new No();
 
-    Aresta *aresta_inicial = aux_aresta_custo_minimo_grafo(&ids_nos, &u, &v); // pegando aresta inicial
+    Aresta *aresta_inicial = aux_aresta_custo_minimo_grafo(subgrafo, &ids_nos, &u, &v); // pegando aresta inicial
 
     // adicionando aresta e vertices iniciais no grafo
     arvore_prim->adicionar_vertice(u->id, u->peso);
@@ -321,9 +346,9 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         else
         {
             // vê se nó tem aresta para u ou v e pega a de menor peso
-            Aresta *aresta_u = aux_tem_aresta_para(get_no(ids_nos[i]), u->id);
+            Aresta *aresta_u = aux_tem_aresta_para(subgrafo->get_no(ids_nos[i]), u->id);
             Aresta *menor_aresta = aresta_u;
-            Aresta *aresta_v = aux_tem_aresta_para(get_no(ids_nos[i]), v->id);
+            Aresta *aresta_v = aux_tem_aresta_para(subgrafo->get_no(ids_nos[i]), v->id);
 
             if (aresta_v->peso < aresta_u->peso)
             {
@@ -346,14 +371,14 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     {
         // pega o indice do menor elemento no vetor e adiciona vértice e aresta correspondente
         int idx_aresta_minima = min_element(custo.begin(), custo.end()) - custo.begin();
-        arvore_prim->adicionar_vertice(ids_nos[idx_aresta_minima], get_no(ids_nos[idx_aresta_minima])->peso);
+        arvore_prim->adicionar_vertice(ids_nos[idx_aresta_minima], subgrafo->get_no(ids_nos[idx_aresta_minima])->peso);
         arvore_prim->adicionar_aresta_grafo(ids_nos[idx_aresta_minima], prox[idx_aresta_minima], custo[idx_aresta_minima]);
 
-        No *no_recem_adicionado = get_no(ids_nos[idx_aresta_minima]);
+        No *no_recem_adicionado = subgrafo->get_no(ids_nos[idx_aresta_minima]);
 
         for (int j = 0; j < no_recem_adicionado->arestas.size(); j++)
         {                                                                                     // para cada aresta do nó adicionado
-            No *novo_no_acessivel = get_no(no_recem_adicionado->arestas[j]->id_no_alvo);      // pega o id alvo
+            No *novo_no_acessivel = subgrafo->get_no(no_recem_adicionado->arestas[j]->id_no_alvo);      // pega o id alvo
             Aresta *aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]); // se tem aresta para o grafo resultante
 
             // pega o prox do novo nó acessível e vê se compensa substituir a aresta
