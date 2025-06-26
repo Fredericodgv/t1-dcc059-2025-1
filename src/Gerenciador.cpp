@@ -296,6 +296,7 @@ bool Gerenciador::pergunta_imprimir_arquivo(string nome_arquivo)
 
 Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
 {
+    /*
     // Abre o arquivo
     ifstream arquivo(nome_arquivo);
 
@@ -348,8 +349,11 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
         // Adiciona a aresta ao grafo
         grafo->adicionar_aresta_grafo(id_no_origem, id_no_destino, peso_aresta);
     }
-
+    
     return grafo;
 
     arquivo.close();
+    */
+
+    return nullptr;
 }

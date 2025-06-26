@@ -378,10 +378,34 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return nullptr;
 }
 
+void Grafo::aux_arvore_caminhamento_profundidade(int id_no, Grafo* arvore) {
+
+    No *no_atual = get_no(id_no);
+    No *no_seguinte;
+    int id_no_seguinte;
+
+    no_atual->no_visitado = true;
+    arvore->adicionar_vertice(id_no, 0);
+
+    for(int i = 0; i < no_atual->arestas.size(); i++) {
+            
+        id_no_seguinte = no_atual->arestas[i]->id_no_alvo;
+        no_seguinte = get_no(id_no_seguinte);
+        if(no_seguinte->no_visitado == false) {
+
+            arvore->adicionar_aresta_grafo(id_no, id_no_seguinte, 0);
+            aux_arvore_caminhamento_profundidade(id_no_seguinte, arvore);
+        }
+    }
+}
+
 Grafo *Grafo::arvore_caminhamento_profundidade(int id_no)
 {
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
+    Grafo *arvore_profundidade = new Grafo();
+    
+    aux_arvore_caminhamento_profundidade(id_no, arvore_profundidade);
+    
+    return arvore_profundidade;
 }
 
 int Grafo::raio()

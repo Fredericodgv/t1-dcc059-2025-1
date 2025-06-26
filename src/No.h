@@ -17,6 +17,7 @@ public:
     int dijkstra_custo_minimo;
     bool dijkstra_fechado;
     char dijkstra_responsavel = 0;
+    bool no_visitado = 0;
 
     vector<Aresta*> arestas;
 
