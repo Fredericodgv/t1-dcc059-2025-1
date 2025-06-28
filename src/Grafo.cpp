@@ -22,35 +22,42 @@ Grafo::~Grafo()
 
 void Grafo::imprimir_lista_adjacencia()
 {
-    cout << "Lista de adjacencia:" << endl;
+    // Ordena os nós por ID para consistência na exibição
+    sort(lista_adj.begin(), lista_adj.end(),
+         [](No *a, No *b)
+         { return a->id < b->id; });
 
     for (No *no : lista_adj)
     {
         if (no == nullptr)
             continue;
 
-        // Imprime o ID do nó e, se for ponderado, o peso
-        cout << no->id;
-        if (in_ponderado_vertice)
-        {
-            cout << "(" << no->peso << ")";
-        }
+        // Imprime o ID do nó
+        cout << no->id << ": ";
 
-        cout << " -> ";
+        // Ordena as arestas por ID do nó de destino
+        sort(no->arestas.begin(), no->arestas.end(),
+             [](Aresta *a, Aresta *b)
+             { return a->id_no_alvo < b->id_no_alvo; });
 
+        bool first = true;
         for (Aresta *aresta : no->arestas)
         {
             if (aresta == nullptr)
                 continue;
 
+            if (!first)
+                cout << " -> ";
+            first = false;
+
+            // Imprime o nó de destino
             cout << aresta->id_no_alvo;
 
+            // Se for ponderado, imprime o peso
             if (in_ponderado_aresta)
             {
                 cout << "(" << aresta->peso << ")";
             }
-
-            cout << " ";
         }
 
         cout << endl;
@@ -250,7 +257,7 @@ vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b)
     return {};
 }
 
-Aresta *Grafo::aux_aresta_custo_minimo_grafo(Grafo* grafo, vector<char> *ids_nos, No **u, No **v)
+Aresta *Grafo::aux_aresta_custo_minimo_grafo(Grafo *grafo, vector<char> *ids_nos, No **u, No **v)
 {
     Aresta *menor_aresta = new Aresta();
     menor_aresta->peso = numeric_limits<int>::max();
@@ -286,15 +293,19 @@ Aresta *aux_tem_aresta_para(No *origem, char destino)
     return aresta;
 };
 
-Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos){
+Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
+{
     Grafo *subgrafo = new Grafo(ids_nos.size(), 0, 1, 1);
 
-    for (int i = 0; i < ids_nos.size(); i++){
-        No* no = get_no(ids_nos[i]);
+    for (int i = 0; i < ids_nos.size(); i++)
+    {
+        No *no = get_no(ids_nos[i]);
         subgrafo->adicionar_vertice(no->id, no->peso);
 
-        for(Aresta* aresta: no->arestas){
-            if(find(ids_nos.begin(), ids_nos.end(), aresta->id_no_alvo) != ids_nos.end()){
+        for (Aresta *aresta : no->arestas)
+        {
+            if (find(ids_nos.begin(), ids_nos.end(), aresta->id_no_alvo) != ids_nos.end())
+            {
                 subgrafo->adicionar_aresta_grafo(no->id, aresta->id_no_alvo, aresta->peso);
             }
         }
@@ -309,14 +320,15 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     {
         cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
     }
-    
+
     int arestas_peso_infinito = 0;
-    //grafo com os vértices pedidos
+    // grafo com os vértices pedidos
     Grafo *subgrafo = gerar_subgrafo(ids_nos);
 
     // iniciando grafo resultante
     Grafo *arvore_prim = new Grafo(ids_nos.size(), 0, 1, 1);
-    if(ids_nos.size() < 2){
+    if (ids_nos.size() < 2)
+    {
         arvore_prim->adicionar_vertice(ids_nos[0], subgrafo->get_no(ids_nos[0])->peso);
         return arvore_prim;
     }
@@ -378,9 +390,9 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         No *no_recem_adicionado = subgrafo->get_no(ids_nos[idx_aresta_minima]);
 
         for (int j = 0; j < no_recem_adicionado->arestas.size(); j++)
-        {                                                                                     // para cada aresta do nó adicionado
-            No *novo_no_acessivel = subgrafo->get_no(no_recem_adicionado->arestas[j]->id_no_alvo);      // pega o id alvo
-            Aresta *aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]); // se tem aresta para o grafo resultante
+        {                                                                                          // para cada aresta do nó adicionado
+            No *novo_no_acessivel = subgrafo->get_no(no_recem_adicionado->arestas[j]->id_no_alvo); // pega o id alvo
+            Aresta *aresta = aux_tem_aresta_para(novo_no_acessivel, prox[idx_aresta_minima]);      // se tem aresta para o grafo resultante
 
             // pega o prox do novo nó acessível e vê se compensa substituir a aresta
             int idx_id = find(ids_nos.begin(), ids_nos.end(), novo_no_acessivel->id) - ids_nos.begin();
@@ -437,8 +449,8 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
         // Verifica se o nó está no subconjunto agm
         if (agm->get_no(no->id) == nullptr)
             continue;
-        
-        for (Aresta *aresta : no->arestas )
+
+        for (Aresta *aresta : no->arestas)
         {
             // verifica se a aresta já existe e se o nó está no subconjunto agm
             if (no->id < aresta->id_no_alvo && agm->get_no(no->id) != nullptr && agm->get_no(aresta->id_no_alvo) != nullptr)
