@@ -346,7 +346,7 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
         grafo->adicionar_aresta_grafo(id_no_origem, id_no_destino, peso_aresta);
     }
 
-    return grafo;
-
     arquivo.close();
+
+    return grafo;
 }
