@@ -60,7 +60,7 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
 
-        cout << "Caminho: [";
+        cout << "Caminho mínimo dijkstra: ";
         for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
         {
             cout << caminho_minimo_dijkstra[i];
@@ -68,12 +68,14 @@ void Gerenciador::comandos(Grafo *grafo)
                 cout << ", ";
         }
 
+        cout << endl;
+
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
             ofstream arquivo("caminho_minimo_dijkstra.txt");
             if (arquivo.is_open())
             {
-                arquivo << "Caminho: [";
+                arquivo << "Caminho mínimo dijkstra: ";
                 for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
                 {
                     arquivo << caminho_minimo_dijkstra[i];
@@ -123,7 +125,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
             {
-                cout << "Metodo de impressao em arquivo nao implementado" << endl;
+                imprimir_grafo_arquivo(arvore_geradora_minima_prim, "agm_prim.txt");
             }
 
             delete arvore_geradora_minima_prim;
@@ -349,4 +351,67 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
     arquivo.close();
 
     return grafo;
+}
+
+void Gerenciador::imprimir_grafo_arquivo(Grafo *grafo, string nome_arquivo)
+{
+    ofstream arquivo("output/" + nome_arquivo);
+    if (!arquivo.is_open())
+    {
+        cerr << "Erro ao abrir o arquivo para escrita: output/" << nome_arquivo << endl;
+        return;
+    }
+
+    // Ordena os nós por ID para consistência (igual à função de impressão)
+    vector<No *> nos_ordenados = grafo->lista_adj;
+    sort(nos_ordenados.begin(), nos_ordenados.end(),
+         [](No *a, No *b)
+         { return a->id < b->id; });
+
+    arquivo << "Grafo:" << endl;
+
+    for (No *no : nos_ordenados)
+    {
+        if (no == nullptr)
+            continue;
+
+        // Imprime o nó de origem
+        arquivo << no->id;
+        if (grafo->in_ponderado_vertice)
+        {
+            arquivo << "(" << no->peso << ")";
+        }
+        arquivo << ": ";
+
+        // Ordena arestas por ID de destino (igual à função de impressão)
+        vector<Aresta *> arestas_ordenadas = no->arestas;
+        sort(arestas_ordenadas.begin(), arestas_ordenadas.end(),
+             [](Aresta *a, Aresta *b)
+             { return a->id_no_alvo < b->id_no_alvo; });
+
+        // Imprime as arestas
+        bool first = true;
+        for (Aresta *aresta : arestas_ordenadas)
+        {
+            if (aresta == nullptr)
+                continue;
+
+            if (!first)
+            {
+                arquivo << " -> ";
+            }
+            first = false;
+
+            arquivo << aresta->id_no_alvo;
+            if (grafo->in_ponderado_aresta)
+            {
+                arquivo << "(" << aresta->peso << ")";
+            }
+        }
+
+        arquivo << endl;
+    }
+
+    arquivo.close();
+    cout << "Grafo exportado para: output/" << nome_arquivo << endl;
 }

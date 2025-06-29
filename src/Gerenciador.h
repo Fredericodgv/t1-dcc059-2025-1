@@ -15,6 +15,7 @@ public:
     static vector<char> get_conjunto_ids(Grafo *grafo, int tam);
     static bool pergunta_imprimir_arquivo(string nome_arquivo);
     static Grafo *ler_arquivo(const string &nome_arquivo);
+    static void imprimir_grafo_arquivo(Grafo *grafo, string nome_arquivo);
 };
 
 #endif // GERENCIADOR_H
