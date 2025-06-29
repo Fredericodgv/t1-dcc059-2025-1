@@ -72,7 +72,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
-            ofstream arquivo("caminho_minimo_dijkstra.txt");
+            ofstream arquivo("output/caminho_minimo_dijkstra.txt");
             if (arquivo.is_open())
             {
                 arquivo << "Caminho mínimo dijkstra: ";
