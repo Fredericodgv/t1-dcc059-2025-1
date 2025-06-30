@@ -67,7 +67,6 @@ void Gerenciador::comandos(Grafo *grafo)
             if (i != caminho_minimo_dijkstra.size() - 1)
                 cout << ", ";
         }
-        cout << "]" << endl;
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
@@ -81,7 +80,6 @@ void Gerenciador::comandos(Grafo *grafo)
                     if (i != caminho_minimo_dijkstra.size() - 1)
                         arquivo << ", ";
                 }
-                arquivo << "]" << endl;
                 arquivo.close();
             }
             else
@@ -370,7 +368,7 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
         grafo->adicionar_aresta_grafo(id_no_origem, id_no_destino, peso_aresta);
     }
 
-    return grafo;
-
     arquivo.close();
+
+    return grafo;
 }
