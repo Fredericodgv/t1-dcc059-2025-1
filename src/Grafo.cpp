@@ -14,6 +14,13 @@ Grafo::Grafo(int ordem, bool direcionado, bool ponderado_aresta, bool ponderado_
     this->in_direcionado = direcionado;
     this->in_ponderado_aresta = ponderado_aresta;
     this->in_ponderado_vertice = ponderado_vertice;
+
+    // Inicializa matrizes de Floyd
+    if (in_ponderado_aresta)
+    {
+        matriz_distancia.resize(ordem, vector<int>(ordem, numeric_limits<int>::max()));
+        matriz_predecessor.resize(ordem, vector<char>(ordem, 0));
+    }
 }
 
 Grafo::~Grafo()
@@ -251,10 +258,136 @@ vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b)
     return resultante;
 }
 
-vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b)
+void Grafo::imprimir_matrizes_floyd()
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    int n = lista_adj.size();
+
+    cout << "\n=== MATRIZ DE DISTÂNCIAS ===" << endl;
+    cout << "    ";
+    for (int j = 0; j < n; j++)
+        cout << lista_adj[j]->id << "\t";
+    cout << endl;
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << lista_adj[i]->id << " | ";
+        for (int j = 0; j < n; j++)
+        {
+            if (matriz_distancia[i][j] == INT_MAX)
+                cout << "INF\t";
+            else
+                cout << matriz_distancia[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
+    cout << "\n=== MATRIZ DE PREDECESSORES ===" << endl;
+    cout << "    ";
+    for (int j = 0; j < n; j++)
+        cout << lista_adj[j]->id << "\t";
+    cout << endl;
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << lista_adj[i]->id << " | ";
+        for (int j = 0; j < n; j++)
+        {
+            if (matriz_predecessor[i][j] == 0)
+                cout << "-\t";
+            else
+                cout << matriz_predecessor[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+
+void Grafo::gera_floyd()
+{
+
+    // Inicializa a matriz de distância
+    int n = lista_adj.size();
+    matriz_distancia.assign(n, vector<int>(n, INT_MAX));
+    matriz_predecessor.assign(n, vector<char>(n, 0)); // ou '\0'
+
+    // Inicialização
+    for (No *no : lista_adj)
+    {
+        int i = pos_id[no->id];
+        matriz_distancia[i][i] = 0;
+        matriz_predecessor[i][i] = no->id;
+
+        for (Aresta *aresta : no->arestas)
+        {
+            int j = pos_id[aresta->id_no_alvo];
+            matriz_distancia[i][j] = aresta->peso;
+            matriz_predecessor[i][j] = no->id;
+        }
+    }
+
+    // Algoritmo de Floyd-Warshall
+    for (int k = 0; k < n; k++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (matriz_distancia[i][k] != INT_MAX && matriz_distancia[k][j] != INT_MAX &&
+                    matriz_distancia[i][j] > matriz_distancia[i][k] + matriz_distancia[k][j])
+                {
+                    matriz_distancia[i][j] = matriz_distancia[i][k] + matriz_distancia[k][j];
+                    matriz_predecessor[i][j] = matriz_predecessor[k][j];
+                }
+            }
+        }
+    }
+}
+
+vector<char> Grafo::caminho_minimo_floyd(int id_no_a, int id_no_b)
+{
+    if (!in_ponderado_aresta)
+    {
+        cout << "Grafo nao ponderado nas arestas." << endl;
+        return {};
+    }
+
+    if (!floyd_gerado)
+    {
+        gera_floyd();
+        floyd_gerado = true;
+    }
+
+    int idx_a = pos_id[id_no_a];
+    int idx_b = pos_id[id_no_b];
+
+    if (matriz_distancia[idx_a][idx_b] == INT_MAX)
+    {
+        cout << "Nao ha caminho entre os nos." << endl;
+        return {};
+    }
+
+    vector<char> caminho;
+
+    // Função recursiva para reconstruir o caminho
+    function<void(int, int)> reconstruir = [&](int i, int j)
+    {
+        if (i == j)
+        {
+            caminho.push_back(lista_adj[i]->id);
+        }
+        else if (matriz_predecessor[i][j] == 0)
+        {
+            caminho.clear(); // caminho inválido
+        }
+        else
+        {
+            reconstruir(i, pos_id[matriz_predecessor[i][j]]);
+            caminho.push_back(lista_adj[j]->id);
+        }
+    };
+
+    reconstruir(idx_a, idx_b);
+    return caminho;
 }
 
 Aresta *Grafo::aux_aresta_custo_minimo_grafo(Grafo *grafo, vector<char> *ids_nos, No **u, No **v)

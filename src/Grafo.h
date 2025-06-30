@@ -40,6 +40,7 @@ public:
     Grafo *arvore_geradora_minima_prim(vector<char> ids_nos);       // e
     Grafo *arvore_geradora_minima_kruskal(vector<char> ids_nos);    // f
     Grafo *arvore_caminhamento_profundidade(int id_no);             // g
+    void imprimir_matrizes_floyd();
     int raio();                                                     // h 1
     int diametro();                                                 // h 2
     vector<char> centro();                                          // h 3
@@ -52,8 +53,14 @@ public:
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
     map<char, unsigned int> pos_id;
+    //matrizes de floyd
+    vector<vector<int>> matriz_distancia;
+    vector<vector<char>> matriz_predecessor;
+    bool floyd_gerado = false;
+
 
 private:
+    void gera_floyd(); // Gera as matrizes de Floyd se necessário
     char find_set(map<char, char> &parent, char v);           // Funcao auxiliar para encontrar o representante de um conjunto
     void union_sets(map<char, char> &parent, char u, char v); // Funcao auxiliar para unir dois conjuntos
 };
