@@ -123,13 +123,13 @@ No *Grafo::get_no(char id)
     return nullptr;
 }
 
-vector<char> Grafo::fecho_transitivo_direto(int id_no)
+vector<char> Grafo::fecho_transitivo_direto(char id_no)
 {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::fecho_transitivo_indireto(int id_no)
+vector<char> Grafo::fecho_transitivo_indireto(char id_no)
 {
     cout << "Metodo nao implementado" << endl;
     return {};
@@ -196,7 +196,7 @@ void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual,
     vec.push_back(no_atual->id);
 }
 
-vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b)
+vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
 {
     if (!in_ponderado_aresta)
     {
@@ -343,7 +343,7 @@ void Grafo::gera_floyd()
     }
 }
 
-vector<char> Grafo::caminho_minimo_floyd(int id_no_a, int id_no_b)
+vector<char> Grafo::caminho_minimo_floyd(char id_no_a, char id_no_b)
 {
     if (!in_ponderado_aresta)
     {
@@ -632,7 +632,7 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-Grafo *Grafo::arvore_caminhamento_profundidade(int id_no)
+Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
