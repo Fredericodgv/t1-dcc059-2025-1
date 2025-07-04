@@ -632,7 +632,7 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore, function<void (No*)> funcao_caminhamento) {
+void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore, function<void (No*)> funcao_caminhamento = [](No*){}) {
 
     No *no_atual = get_no(id_no);
     No *no_seguinte;
@@ -657,7 +657,7 @@ Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
     Grafo *arvore_profundidade = new Grafo();
     
-    aux_arvore_caminhamento_profundidade(id_no, arvore_profundidade);
+    aux_arvore_caminhamento_profundidade(id_no, arvore_profundidade, nullptr);
     
     return arvore_profundidade;
 }
