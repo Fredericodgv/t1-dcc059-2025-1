@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Trabalho 1
 **Universidade Federal de Juiz de Fora**
 **Departamento de Ciência da Computação**
@@ -172,4 +171,3 @@ Você deve informar isso no relatório e haverá algum desconto na nota, depende
 Não serão avaliados trabalhos com erros de compilação. Por isso a importância de se usar apenas funções do padrão Ansi.
 8.	***Tenho outra pergunta/dúvida a respeito do trabalho.***
 Procure o professor ou o tutor para tirar suas dúvidas no horário de atendimento ou durante as aulas.
->>>>>>> upstream/main
