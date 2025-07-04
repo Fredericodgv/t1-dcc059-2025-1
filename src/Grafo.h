@@ -56,7 +56,7 @@ public:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
-    map<char, unsigned int> pos_id;
+    map<char, int> pos_id;
     //matrizes de floyd
     vector<vector<int>> matriz_distancia;
     vector<vector<char>> matriz_predecessor;

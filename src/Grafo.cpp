@@ -34,11 +34,13 @@ void Grafo::imprimir_lista_adjacencia()
          [](No *a, No *b)
          { return a->id < b->id; });
 
-    for (No *no : lista_adj)
+    for (int i = 0; i < lista_adj.size(); i++)
     {
+        No *no = lista_adj[i];
         if (no == nullptr)
             continue;
 
+        pos_id.insert_or_assign(no->id, i);
         // Imprime o ID do nó
         cout << no->id << ": ";
 
@@ -118,27 +120,33 @@ No *Grafo::get_no(char id)
     auto it_map = pos_id.find(id);
     if (it_map != pos_id.end())
     {
-        return lista_adj[pos_id.find(id)->second];
+        return lista_adj[it_map->second];
     }
     return nullptr;
 }
 
-void Grafo::aux_fecho_transitivo_direto(No* no, vector<char> &resultado) {
+void Grafo::aux_fecho_transitivo_direto(No *no, vector<char> &resultado)
+{
     resultado.push_back(no->id);
 }
 
 vector<char> Grafo::fecho_transitivo_direto(char id_no)
 {
-    if(!in_direcionado){
+    if (!in_direcionado)
+    {
         cout << "Grafo nao direcionado" << endl;
         return {};
     }
 
     vector<char> resultado(0);
 
-    aux_caminhamento_profundidade(id_no, [&resultado, this](No* no, char id_no_seguinte) {
-        aux_fecho_transitivo_direto(no, resultado);
-    });
+    aux_caminhamento_profundidade(id_no, [&resultado, this](No *no, char id_no_seguinte)
+                                  { aux_fecho_transitivo_direto(no, resultado); });
+    
+    //filtrando os nos iguais
+    sort(resultado.begin(), resultado.end());
+    auto last = unique(resultado.begin(), resultado.end());
+    resultado.erase(last, resultado.end());
 
     return resultado;
 }
@@ -202,12 +210,17 @@ void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual,
 {
     No *no_atual = get_no(id_atual);
     char id_responsavel = no_atual->dijkstra_responsavel;
-    if (id_atual != id_no_a)
+    if (id_responsavel != 0)
     {
-        aux_retorna_chars_caminho_dijkstra(vec, id_responsavel, id_no_a);
-    }
+        if (id_atual != id_no_a)
+        {
+            aux_retorna_chars_caminho_dijkstra(vec, id_responsavel, id_no_a);
+        }
 
-    vec.push_back(no_atual->id);
+        vec.push_back(no_atual->id);
+    } else {
+        vec.push_back(0);
+    }
 }
 
 vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
@@ -222,11 +235,13 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     vector<No *> nos_abertos(0);
 
     No *no_inicial = get_no(id_no_a);
+
     no_inicial->dijkstra_custo_minimo = 0;
     no_inicial->dijkstra_responsavel = id_no_a;
     no_inicial->dijkstra_fechado = false;
 
     nos_abertos.push_back(no_inicial);
+
     for (int i = 0; i < lista_adj.size(); i++)
     {
         if (lista_adj[i]->id != id_no_a)
@@ -251,15 +266,16 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
 
         for (int j = 0; j < no_custo_minimo->arestas.size(); j++)
         {
-            No *no = get_no(no_custo_minimo->arestas[j]->id_no_alvo);
-            int novo_custo = no_custo_minimo->dijkstra_custo_minimo + no_custo_minimo->arestas[j]->peso;
+            No *no_desatualizado = get_no(no_custo_minimo->arestas[j]->id_no_alvo);
+            int custo_para_no_desatualizado = no_custo_minimo->arestas[j]->peso;
+            int novo_custo = no_custo_minimo->dijkstra_custo_minimo + custo_para_no_desatualizado;
 
-            if (!no->dijkstra_fechado)
+            if (!no_desatualizado->dijkstra_fechado)
             {
-                if (no->dijkstra_custo_minimo > novo_custo)
+                if (novo_custo < no_desatualizado->dijkstra_custo_minimo)
                 {
-                    no->dijkstra_custo_minimo = novo_custo;
-                    no->dijkstra_responsavel = no_custo_minimo->id;
+                    no_desatualizado->dijkstra_custo_minimo = novo_custo;
+                    no_desatualizado->dijkstra_responsavel = no_custo_minimo->id;
                 }
             }
         }
@@ -314,7 +330,6 @@ void Grafo::imprimir_matrizes_floyd()
         cout << endl;
     }
 }
-
 
 void Grafo::gera_floyd()
 {
@@ -646,26 +661,30 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-void Grafo::aux_caminhamento_profundidade(char id_no, function<void (No*, char)> funcao_caminhamento = [](No*, char){}) {
-
+void Grafo::aux_caminhamento_profundidade(char id_no, function<void(No *, char)> funcao_caminhamento = [](No *, char) {})
+{
     No *no_atual = get_no(id_no);
     No *no_seguinte;
     int id_no_seguinte;
 
     no_atual->no_visitado = true;
 
-    for(int i = 0; i < no_atual->arestas.size(); i++) {
-            
+    for (int i = 0; i < no_atual->arestas.size(); i++)
+    {
+
         id_no_seguinte = no_atual->arestas[i]->id_no_alvo;
         no_seguinte = get_no(id_no_seguinte);
-        if(no_seguinte->no_visitado == false) {
+        if (no_seguinte->no_visitado == false)
+        {
             funcao_caminhamento(no_atual, id_no_seguinte);
             aux_caminhamento_profundidade(id_no_seguinte, funcao_caminhamento);
+            no_atual->no_visitado = false;
         }
     }
 }
 
-void aux_insere_aresta_grafo(Grafo* arvore, No* no, char id_no_seguinte) {
+void aux_insere_aresta_grafo(Grafo *arvore, No *no, char id_no_seguinte)
+{
     arvore->adicionar_vertice(no->id, 0);
     arvore->adicionar_aresta_grafo(no->id, id_no_seguinte, 0);
 }
@@ -673,11 +692,10 @@ void aux_insere_aresta_grafo(Grafo* arvore, No* no, char id_no_seguinte) {
 Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
     Grafo *arvore_profundidade = new Grafo();
-    
-    aux_caminhamento_profundidade(id_no, [&arvore_profundidade, this](No* no, char id_no_seguinte) {
-        aux_insere_aresta_grafo(arvore_profundidade, no, id_no_seguinte);
-    });
-    
+
+    aux_caminhamento_profundidade(id_no, [&arvore_profundidade, this](No *no, char id_no_seguinte)
+                                  { aux_insere_aresta_grafo(arvore_profundidade, no, id_no_seguinte); });
+
     return arvore_profundidade;
 }
 

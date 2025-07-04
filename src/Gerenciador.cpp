@@ -32,7 +32,7 @@ void Gerenciador::comandos(Grafo *grafo)
             if (i != fecho_transitivo_direto.size() - 1)
                 cout << ", ";
         }
-        cout<<"]"<<endl;
+        cout << "]" << endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
@@ -67,12 +67,27 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
 
-        cout << "Caminho: [";
+        bool impossivel = false;
         for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
         {
-            cout << caminho_minimo_dijkstra[i];
-            if (i != caminho_minimo_dijkstra.size() - 1)
-                cout << ", ";
+            if (caminho_minimo_dijkstra[i] == 0)
+                impossivel = true;
+        }
+
+        if (impossivel)
+        {
+            cout<<"Algo deu errado, caminho buscado pode nao ser possivel"<<endl;
+        }
+        else
+        {
+            cout << "Caminho: [";
+            for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
+            {
+                cout << caminho_minimo_dijkstra[i];
+                if (i != caminho_minimo_dijkstra.size() - 1)
+                    cout << ", ";
+            }
+            cout << "]" << endl;
         }
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
@@ -87,6 +102,7 @@ void Gerenciador::comandos(Grafo *grafo)
                     if (i != caminho_minimo_dijkstra.size() - 1)
                         arquivo << ", ";
                 }
+                cout << "]" << endl;
                 arquivo.close();
             }
             else
