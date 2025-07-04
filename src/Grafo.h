@@ -31,6 +31,8 @@ public:
 
     void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
+    void aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore);
+
     No *get_no(char id); // a
 
     vector<char> fecho_transitivo_direto(char id_no);                // a
