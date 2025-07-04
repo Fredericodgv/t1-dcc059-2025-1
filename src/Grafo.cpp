@@ -632,7 +632,7 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore) {
+void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore, function<void (No*)> funcao_caminhamento) {
 
     No *no_atual = get_no(id_no);
     No *no_seguinte;
@@ -648,7 +648,7 @@ void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore) {
         if(no_seguinte->no_visitado == false) {
 
             arvore->adicionar_aresta_grafo(id_no, id_no_seguinte, 0);
-            aux_arvore_caminhamento_profundidade(id_no_seguinte, arvore);
+            aux_arvore_caminhamento_profundidade(id_no_seguinte, arvore, funcao_caminhamento);
         }
     }
 }

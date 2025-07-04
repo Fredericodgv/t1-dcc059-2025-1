@@ -31,7 +31,7 @@ public:
 
     void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
-    void aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore);
+    void aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore, function<void (No*)> funcao_caminhamento);
 
     No *get_no(char id); // a
 
