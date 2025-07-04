@@ -24,8 +24,15 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+
+        cout << "Fecho transitivo direto: [";
+        for (int i = 0; i < fecho_transitivo_direto.size(); i++)
+        {
+            cout << fecho_transitivo_direto[i];
+            if (i != fecho_transitivo_direto.size() - 1)
+                cout << ", ";
+        }
+        cout<<"]"<<endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
@@ -192,8 +199,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         Grafo *arvore_caminhamento_profundidade = grafo->arvore_caminhamento_profundidade(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        arvore_caminhamento_profundidade->imprimir_lista_adjacencia();
 
         if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
         {

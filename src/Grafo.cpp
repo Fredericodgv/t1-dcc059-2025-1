@@ -123,10 +123,24 @@ No *Grafo::get_no(char id)
     return nullptr;
 }
 
+void Grafo::aux_fecho_transitivo_direto(No* no, vector<char> &resultado) {
+    resultado.push_back(no->id);
+}
+
 vector<char> Grafo::fecho_transitivo_direto(char id_no)
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if(!in_direcionado){
+        cout << "Grafo nao direcionado" << endl;
+        return {};
+    }
+
+    vector<char> resultado(0);
+
+    aux_caminhamento_profundidade(id_no, [&resultado, this](No* no, char id_no_seguinte) {
+        aux_fecho_transitivo_direto(no, resultado);
+    });
+
+    return resultado;
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no)
@@ -632,32 +646,37 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-void Grafo::aux_arvore_caminhamento_profundidade(char id_no, Grafo* arvore, function<void (No*)> funcao_caminhamento = [](No*){}) {
+void Grafo::aux_caminhamento_profundidade(char id_no, function<void (No*, char)> funcao_caminhamento = [](No*, char){}) {
 
     No *no_atual = get_no(id_no);
     No *no_seguinte;
     int id_no_seguinte;
 
     no_atual->no_visitado = true;
-    arvore->adicionar_vertice(id_no, 0);
 
     for(int i = 0; i < no_atual->arestas.size(); i++) {
             
         id_no_seguinte = no_atual->arestas[i]->id_no_alvo;
         no_seguinte = get_no(id_no_seguinte);
         if(no_seguinte->no_visitado == false) {
-
-            arvore->adicionar_aresta_grafo(id_no, id_no_seguinte, 0);
-            aux_arvore_caminhamento_profundidade(id_no_seguinte, arvore, funcao_caminhamento);
+            funcao_caminhamento(no_atual, id_no_seguinte);
+            aux_caminhamento_profundidade(id_no_seguinte, funcao_caminhamento);
         }
     }
+}
+
+void aux_insere_aresta_grafo(Grafo* arvore, No* no, char id_no_seguinte) {
+    arvore->adicionar_vertice(no->id, 0);
+    arvore->adicionar_aresta_grafo(no->id, id_no_seguinte, 0);
 }
 
 Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
     Grafo *arvore_profundidade = new Grafo();
     
-    aux_arvore_caminhamento_profundidade(id_no, arvore_profundidade, nullptr);
+    aux_caminhamento_profundidade(id_no, [&arvore_profundidade, this](No* no, char id_no_seguinte) {
+        aux_insere_aresta_grafo(arvore_profundidade, no, id_no_seguinte);
+    });
     
     return arvore_profundidade;
 }
