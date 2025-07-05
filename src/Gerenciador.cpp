@@ -80,29 +80,29 @@ void Gerenciador::comandos(Grafo *grafo)
         }
         else
         {
-            cout << "Caminho: [";
+            cout << "Caminho: ";
             for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
             {
                 cout << caminho_minimo_dijkstra[i];
                 if (i != caminho_minimo_dijkstra.size() - 1)
                     cout << ", ";
             }
-            cout << "]" << endl;
+            cout << endl;
         }
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
-            ofstream arquivo("caminho_minimo_dijkstra.txt");
+            ofstream arquivo("output/caminho_minimo_dijkstra.txt");
             if (arquivo.is_open())
             {
-                arquivo << "Caminho: [";
+                arquivo << "Caminho: ";
                 for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
                 {
                     arquivo << caminho_minimo_dijkstra[i];
                     if (i != caminho_minimo_dijkstra.size() - 1)
                         arquivo << ", ";
                 }
-                cout << "]" << endl;
+                arquivo << endl;
                 arquivo.close();
             }
             else
