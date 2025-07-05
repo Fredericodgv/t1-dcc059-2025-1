@@ -437,7 +437,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
     if (!in_ponderado_aresta || in_direcionado)
     {
-        cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+        return nullptr;
     }
 
     int arestas_peso_infinito = 0;
@@ -545,7 +545,6 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
 {
     if (!in_ponderado_aresta || in_direcionado)
     {
-        cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
         return nullptr;
     }
 
