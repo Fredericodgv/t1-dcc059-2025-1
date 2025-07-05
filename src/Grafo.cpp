@@ -75,13 +75,18 @@ void Grafo::imprimir_lista_adjacencia()
 
 bool Grafo::adicionar_vertice(char id, int peso)
 {
-    if (ordem < lista_adj.size())
+    if(ordem < lista_adj.size())
     {
         cout << "Grafo cheio, nao e possivel adicionar mais nos." << endl;
         return false;
     }
 
-    No *novo_no = new No();
+    No *novo_no = get_no(id);
+    if(novo_no != nullptr){
+        return false;
+    }
+    
+    novo_no = new No();
     novo_no->id = id;
     novo_no->peso = peso;
     pos_id.insert({id, lista_adj.size()});
@@ -140,21 +145,54 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no)
 
     vector<char> resultado(0);
 
-    aux_caminhamento_profundidade(id_no, [&resultado, this](No *no, char id_no_seguinte)
+    caminhamento_profundidade(id_no, [&resultado, this](No *no)
                                   { aux_fecho_transitivo_direto(no, resultado); });
     
-    //filtrando os nos iguais
+
+    //ordenando
     sort(resultado.begin(), resultado.end());
-    auto last = unique(resultado.begin(), resultado.end());
-    resultado.erase(last, resultado.end());
 
     return resultado;
 }
 
+Grafo* aux_inverte_arestas_grafo(Grafo *arvore) {
+
+    Grafo *grafo_invertido = new Grafo(arvore->ordem, arvore->in_direcionado, arvore->in_ponderado_aresta, arvore->in_ponderado_vertice);
+
+    for(No* n : arvore->lista_adj) {
+        grafo_invertido->adicionar_vertice(n->id, 0);
+    }
+
+    for(No* n : grafo_invertido->lista_adj) {
+        for(Aresta* a : n->arestas) {
+            grafo_invertido->adicionar_aresta_grafo(a->id_no_alvo, a->id_no_origem, a->peso);
+        }
+    }
+
+    return grafo_invertido;
+}
+
 vector<char> Grafo::fecho_transitivo_indireto(char id_no)
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if (!in_direcionado)
+    {
+        cout << "Grafo nao direcionado" << endl;
+        return {};
+    }
+    
+    //cria grafo com arestas invertidas
+    Grafo* grafo_invertido = aux_inverte_arestas_grafo(this);
+    vector<char> resultado(0);
+
+    //com o grafo  invertido, utiliza-se o mesmo metodo do fecho transitivo direto
+    resultado = grafo_invertido->fecho_transitivo_direto(id_no);
+    
+    delete grafo_invertido;
+
+    //ordenando
+    sort(resultado.begin(), resultado.end());
+
+    return resultado;
 }
 
 void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a)
@@ -617,40 +655,57 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
     return agm;
 }
 
-void Grafo::aux_caminhamento_profundidade(char id_no, function<void(No *, char)> funcao_caminhamento = [](No *, char) {})
+
+void Grafo::aux_insere_aresta_arvore_caminhamento(Grafo *arvore, No *no)
+{
+    arvore->adicionar_vertice(no->id, 0);
+
+    for(Aresta* aresta : no->arestas){
+        arvore->adicionar_vertice(aresta->id_no_alvo);
+        arvore->adicionar_aresta_grafo(no->id, aresta->id_no_alvo, aresta->peso);
+    }
+}
+
+void Grafo::aux_caminhamento_profundidade(char id_no, function<void(No *)> funcao_caminhamento = [](No *) {})
 {
     No *no_atual = get_no(id_no);
     No *no_seguinte;
     int id_no_seguinte;
 
     no_atual->no_visitado = true;
+    funcao_caminhamento(no_atual);
 
     for (int i = 0; i < no_atual->arestas.size(); i++)
     {
-
         id_no_seguinte = no_atual->arestas[i]->id_no_alvo;
         no_seguinte = get_no(id_no_seguinte);
+
         if (no_seguinte->no_visitado == false)
         {
-            funcao_caminhamento(no_atual, id_no_seguinte);
             aux_caminhamento_profundidade(id_no_seguinte, funcao_caminhamento);
-            no_atual->no_visitado = false;
         }
     }
 }
 
-void aux_insere_aresta_grafo(Grafo *arvore, No *no, char id_no_seguinte)
+void Grafo::caminhamento_profundidade(char id_no, function<void(No *)> funcao_caminhamento = [](No *) {})
 {
-    arvore->adicionar_vertice(no->id, 0);
-    arvore->adicionar_aresta_grafo(no->id, id_no_seguinte, 0);
+    aux_caminhamento_profundidade(id_no, funcao_caminhamento);
+    aux_reseta_visitas();
+}
+
+void Grafo::aux_reseta_visitas(){
+    for(No* no : lista_adj){
+        no->no_visitado = false;
+    }
 }
 
 Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
-    Grafo *arvore_profundidade = new Grafo();
+    Grafo *arvore_profundidade = new Grafo(ordem, in_direcionado, in_ponderado_aresta, 0);
 
-    aux_caminhamento_profundidade(id_no, [&arvore_profundidade, this](No *no, char id_no_seguinte)
-                                  { aux_insere_aresta_grafo(arvore_profundidade, no, id_no_seguinte); });
+    caminhamento_profundidade(id_no, [&arvore_profundidade, this](No *no)
+                                  { aux_insere_aresta_arvore_caminhamento(arvore_profundidade, no); });
+    
 
     return arvore_profundidade;
 }
