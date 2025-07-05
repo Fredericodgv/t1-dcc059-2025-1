@@ -182,9 +182,11 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no)
     vector<char> resultado(0);
 
     //com o grafo  invertido, utiliza-se o mesmo metodo do fecho transitivo direto
-    aux_caminhamento_profundidade(id_no, [&resultado, this](No *no, char id_no_seguinte)
+    aux_caminhamento_profundidade(id_no, [&resultado, grafo_invertido](No *no, char id_no_seguinte)
                                   { aux_fecho_transitivo_direto(no, resultado); });
     
+    delete grafo_invertido;
+
     //filtrando os nos iguais
     sort(resultado.begin(), resultado.end());
     auto last = unique(resultado.begin(), resultado.end());
