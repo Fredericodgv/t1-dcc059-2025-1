@@ -24,8 +24,15 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+
+        cout << "Fecho transitivo direto: [";
+        for (int i = 0; i < fecho_transitivo_direto.size(); i++)
+        {
+            cout << fecho_transitivo_direto[i];
+            if (i != fecho_transitivo_direto.size() - 1)
+                cout << ", ";
+        }
+        cout << "]" << endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
@@ -60,28 +67,42 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
 
-        cout << "Caminho mínimo dijkstra: ";
+        bool impossivel = false;
         for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
         {
-            cout << caminho_minimo_dijkstra[i];
-            if (i != caminho_minimo_dijkstra.size() - 1)
-                cout << ", ";
+            if (caminho_minimo_dijkstra[i] == 0)
+                impossivel = true;
         }
 
-        cout << endl;
+        if (impossivel)
+        {
+            cout<<"Algo deu errado, caminho buscado pode nao ser possivel"<<endl;
+        }
+        else
+        {
+            cout << "Caminho: ";
+            for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
+            {
+                cout << caminho_minimo_dijkstra[i];
+                if (i != caminho_minimo_dijkstra.size() - 1)
+                    cout << ", ";
+            }
+            cout << endl;
+        }
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
             ofstream arquivo("output/caminho_minimo_dijkstra.txt");
             if (arquivo.is_open())
             {
-                arquivo << "Caminho mínimo dijkstra: ";
+                arquivo << "Caminho: ";
                 for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
                 {
                     arquivo << caminho_minimo_dijkstra[i];
                     if (i != caminho_minimo_dijkstra.size() - 1)
                         arquivo << ", ";
                 }
+                arquivo << endl;
                 arquivo.close();
             }
             else
@@ -99,12 +120,34 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
 
+        cout << "Caminho: ";
+        for (int i = 0; i < caminho_minimo_floyd.size(); i++)
+        {
+            cout << caminho_minimo_floyd[i];
+            if (i != caminho_minimo_floyd.size() - 1)
+                cout << ", ";
+        }
+        cout << endl;
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
         {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl;
+            ofstream arquivo("output/caminho_minimo_floyd.txt");
+            if (arquivo.is_open())
+            {
+                arquivo << "Caminho: ";
+                for (int i = 0; i < caminho_minimo_floyd.size(); i++)
+                {
+                    arquivo << caminho_minimo_floyd[i];
+                    if (i != caminho_minimo_floyd.size() - 1)
+                        arquivo << ", ";
+                }
+                arquivo << endl;
+                arquivo.close();
+            }
+            else
+            {
+                cout << "Erro ao abrir o arquivo para escrita." << endl;
+            }
         }
 
         break;
@@ -121,6 +164,11 @@ void Gerenciador::comandos(Grafo *grafo)
 
             vector<char> ids = get_conjunto_ids(grafo, tam);
             Grafo *arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
+            if (arvore_geradora_minima_prim == nullptr)
+            {
+                cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+                break;
+            }
             arvore_geradora_minima_prim->imprimir_lista_adjacencia();
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
@@ -150,6 +198,11 @@ void Gerenciador::comandos(Grafo *grafo)
 
             vector<char> ids = get_conjunto_ids(grafo, tam);
             Grafo *arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
+            if (arvore_geradora_minima_kruskal == nullptr)
+            {
+                cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+                break;
+            }
             arvore_geradora_minima_kruskal->imprimir_lista_adjacencia();
 
             if (pergunta_imprimir_arquivo("agm_kruskal.txt"))
@@ -172,8 +225,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         Grafo *arvore_caminhamento_profundidade = grafo->arvore_caminhamento_profundidade(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        arvore_caminhamento_profundidade->imprimir_lista_adjacencia();
 
         if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
         {
@@ -352,6 +404,7 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
 
     return grafo;
 }
+
 
 void Gerenciador::imprimir_grafo_arquivo(Grafo *grafo, string nome_arquivo)
 {

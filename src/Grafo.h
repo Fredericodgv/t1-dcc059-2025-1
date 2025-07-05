@@ -31,15 +31,20 @@ public:
 
     void aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a);
 
+    void aux_caminhamento_profundidade(char id_no, function<void (No*, char)> funcao_caminhamento);
+
+    void aux_fecho_transitivo_direto(No* no, vector<char> &resultado);
+
     No *get_no(char id); // a
 
-    vector<char> fecho_transitivo_direto(int id_no);                // a
-    vector<char> fecho_transitivo_indireto(int id_no);              // b
-    vector<char> caminho_minimo_dijkstra(int id_no_a, int id_no_b); // c
-    vector<char> caminho_minimo_floyd(int id_no, int id_no_b);      // d
+    vector<char> fecho_transitivo_direto(char id_no);                // a
+    vector<char> fecho_transitivo_indireto(char id_no);              // b
+    vector<char> caminho_minimo_dijkstra(char id_no_a, char id_no_b); // c
+    vector<char> caminho_minimo_floyd(char id_no, char id_no_b);      // d
     Grafo *arvore_geradora_minima_prim(vector<char> ids_nos);       // e
     Grafo *arvore_geradora_minima_kruskal(vector<char> ids_nos);    // f
-    Grafo *arvore_caminhamento_profundidade(int id_no);             // g
+    Grafo *arvore_caminhamento_profundidade(char id_no);             // g
+    void imprimir_matrizes_floyd();
     int raio();                                                     // h 1
     int diametro();                                                 // h 2
     vector<char> centro();                                          // h 3
@@ -51,9 +56,15 @@ public:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No *> lista_adj;
-    map<char, unsigned int> pos_id;
+    map<char, int> pos_id;
+    //matrizes de floyd
+    vector<vector<int>> matriz_distancia;
+    vector<vector<char>> matriz_predecessor;
+    bool floyd_gerado = false;
+
 
 private:
+    void gera_floyd(); // Gera as matrizes de Floyd se necessário
     char find_set(map<char, char> &parent, char v);           // Funcao auxiliar para encontrar o representante de um conjunto
     void union_sets(map<char, char> &parent, char u, char v); // Funcao auxiliar para unir dois conjuntos
 };
