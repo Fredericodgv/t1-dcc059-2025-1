@@ -151,10 +151,46 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no)
     return resultado;
 }
 
+Grafo* aux_inverte_arestas_grafo(Grafo *arvore) {
+
+    Grafo *grafo_invertido = new Grafo();
+    grafo_invertido->in_direcionado = true;
+
+    for(No* n : arvore->lista_adj) {
+        grafo_invertido->adicionar_vertice(n->id, 0);
+    }
+
+    for(No* n : grafo_invertido->lista_adj) {
+        for(Aresta* a : n->arestas) {
+            grafo_invertido->adicionar_aresta_grafo(a->id_no_alvo, a->id_no_origem, 0);
+        }
+    }
+
+    return grafo_invertido;
+}
+
 vector<char> Grafo::fecho_transitivo_indireto(char id_no)
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if (!in_direcionado)
+    {
+        cout << "Grafo nao direcionado" << endl;
+        return {};
+    }
+    
+    //cria grafo com arestas invertidas
+    Grafo* grafo_invertido = aux_inverte_arestas_grafo(this);
+    vector<char> resultado(0);
+
+    //com o grafo  invertido, utiliza-se o mesmo metodo do fecho transitivo direto
+    aux_caminhamento_profundidade(id_no, [&resultado, this](No *no, char id_no_seguinte)
+                                  { aux_fecho_transitivo_direto(no, resultado); });
+    
+    //filtrando os nos iguais
+    sort(resultado.begin(), resultado.end());
+    auto last = unique(resultado.begin(), resultado.end());
+    resultado.erase(last, resultado.end());
+
+    return resultado;
 }
 
 void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a)
