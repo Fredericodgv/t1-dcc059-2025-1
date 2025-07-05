@@ -710,6 +710,39 @@ Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
     return arvore_profundidade;
 }
 
+int aux_calcula_distancia_nos(char id_no_inicial, char id_no_final) {
+
+    return caminho_minimo_dijkstra(id_no_inicial, id_no_final).size();
+}
+
+int aux_calcula_excentricidade_no(char id_no) {
+    
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return {};
+    }
+
+    No* no_pedido = get_no(id_no);
+    
+    if (no_pedido->arestas.size() == 0) {
+        cout << "No sem arestas" << endl;
+        return {};
+    }
+
+    int exc_no_1 = aux_calcula_distancia_nos(id_no, no_pedido->arestas[0]->id_no_alvo);
+    int exc_no_2;
+
+    for(int i = 1; i < no_pedido->arestas.size(); i++) {
+
+        exc_no_2 = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo)
+        if(exc_no_1 < exc_no_2)
+        exc_no_1 = exc_no_2;
+    }
+
+    return exc_no_1;
+}
+
 int Grafo::raio()
 {
     cout << "Metodo nao implementado" << endl;
