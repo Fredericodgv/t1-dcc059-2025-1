@@ -155,15 +155,15 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no)
     return resultado;
 }
 
-Grafo* aux_inverte_arestas_grafo(Grafo *arvore) {
+Grafo* aux_inverte_arestas_grafo(Grafo *grafo_original) {
 
-    Grafo *grafo_invertido = new Grafo(arvore->ordem, arvore->in_direcionado, arvore->in_ponderado_aresta, arvore->in_ponderado_vertice);
+    Grafo *grafo_invertido = new Grafo(grafo_original->ordem, grafo_original->in_direcionado, grafo_original->in_ponderado_aresta, grafo_original->in_ponderado_vertice);
 
-    for(No* n : arvore->lista_adj) {
+    for(No* n : grafo_original->lista_adj) {
         grafo_invertido->adicionar_vertice(n->id, 0);
     }
 
-    for(No* n : grafo_invertido->lista_adj) {
+    for(No* n : grafo_original->lista_adj) {
         for(Aresta* a : n->arestas) {
             grafo_invertido->adicionar_aresta_grafo(a->id_no_alvo, a->id_no_origem, a->peso);
         }

@@ -16,6 +16,8 @@ public:
     static bool pergunta_imprimir_arquivo(string nome_arquivo);
     static Grafo *ler_arquivo(const string &nome_arquivo);
     static void imprimir_grafo_arquivo(Grafo *grafo, string nome_arquivo);
+    static void imprimir_vector_tela(vector<char> &resultado);
+    static void imprimir_vector_arquivo(vector<char> &resultado, string arquivo, string descricao);
 };
 
 #endif // GERENCIADOR_H

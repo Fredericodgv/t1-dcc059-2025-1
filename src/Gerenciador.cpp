@@ -1,5 +1,36 @@
 #include "Gerenciador.h"
 
+void Gerenciador::imprimir_vector_tela(vector<char> &resultado)
+{
+    for (int i = 0; i < resultado.size(); i++)
+    {
+        cout << resultado[i];
+        if (i != resultado.size() - 1)
+            cout << ", ";
+    }
+    cout << endl;
+}
+
+void Gerenciador::imprimir_vector_arquivo(vector<char> &resultado, string nome_arquivo, string descricao)
+{
+    ofstream arquivo(nome_arquivo);
+    if (arquivo.is_open())
+    {
+        arquivo << descricao;
+        for (int i = 0; i < resultado.size(); i++)
+        {
+            arquivo << resultado[i];
+            if (i != resultado.size() - 1)
+                arquivo << ", ";
+        }
+        arquivo << endl;
+        arquivo.close();
+    }
+    else
+    {
+        cout << "Erro ao abrir o arquivo para escrita." << endl;
+    }
+}
 void Gerenciador::comandos(Grafo *grafo)
 {
     cout << "Digite uma das opcoes abaixo e pressione enter:" << endl
@@ -25,14 +56,9 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
 
-        cout << "Fecho transitivo direto: [";
-        for (int i = 0; i < fecho_transitivo_direto.size(); i++)
-        {
-            cout << fecho_transitivo_direto[i];
-            if (i != fecho_transitivo_direto.size() - 1)
-                cout << ", ";
-        }
-        cout << "]" << endl;
+        cout << "Fecho transitivo direto: ";
+        imprimir_vector_tela(fecho_transitivo_direto);
+        cout << endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
@@ -48,8 +74,9 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        cout << "Fecho transitivo indireto: ";
+        imprimir_vector_tela(fecho_transitivo_indireto);
+        cout << endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_indir.txt"))
         {
@@ -76,78 +103,41 @@ void Gerenciador::comandos(Grafo *grafo)
 
         if (impossivel)
         {
-            cout<<"Algo deu errado, caminho buscado pode nao ser possivel"<<endl;
+            cout << "Algo deu errado, caminho buscado pode nao ser possivel" << endl;
         }
         else
         {
             cout << "Caminho: ";
-            for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
-            {
-                cout << caminho_minimo_dijkstra[i];
-                if (i != caminho_minimo_dijkstra.size() - 1)
-                    cout << ", ";
-            }
+            imprimir_vector_tela(caminho_minimo_dijkstra);
             cout << endl;
         }
 
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
-            ofstream arquivo("output/caminho_minimo_dijkstra.txt");
-            if (arquivo.is_open())
-            {
-                arquivo << "Caminho: ";
-                for (int i = 0; i < caminho_minimo_dijkstra.size(); i++)
-                {
-                    arquivo << caminho_minimo_dijkstra[i];
-                    if (i != caminho_minimo_dijkstra.size() - 1)
-                        arquivo << ", ";
-                }
-                arquivo << endl;
-                arquivo.close();
-            }
-            else
-            {
-                cout << "Erro ao abrir o arquivo para escrita." << endl;
-            }
+            imprimir_vector_arquivo(caminho_minimo_dijkstra, "output/caminho_minimo_dijkstra.txt", "Caminho: ");
         }
-
+        
         break;
     }
-
+    
     case 'd':
     {
-
+        
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
-
+        
         cout << "Caminho: ";
         for (int i = 0; i < caminho_minimo_floyd.size(); i++)
         {
             cout << caminho_minimo_floyd[i];
             if (i != caminho_minimo_floyd.size() - 1)
-                cout << ", ";
+            cout << ", ";
         }
         cout << endl;
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
         {
-            ofstream arquivo("output/caminho_minimo_floyd.txt");
-            if (arquivo.is_open())
-            {
-                arquivo << "Caminho: ";
-                for (int i = 0; i < caminho_minimo_floyd.size(); i++)
-                {
-                    arquivo << caminho_minimo_floyd[i];
-                    if (i != caminho_minimo_floyd.size() - 1)
-                        arquivo << ", ";
-                }
-                arquivo << endl;
-                arquivo.close();
-            }
-            else
-            {
-                cout << "Erro ao abrir o arquivo para escrita." << endl;
-            }
+            imprimir_vector_arquivo(caminho_minimo_floyd, "output/caminho_minimo_floyd.txt", "Caminho: ");
         }
 
         break;
@@ -404,7 +394,6 @@ Grafo *Gerenciador::ler_arquivo(const string &nome_arquivo)
 
     return grafo;
 }
-
 
 void Gerenciador::imprimir_grafo_arquivo(Grafo *grafo, string nome_arquivo)
 {
