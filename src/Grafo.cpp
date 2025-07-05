@@ -157,55 +157,6 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no)
     return {};
 }
 
-// funções de quicksort pegas na geeksforgeeks
-int partition(vector<No *> &vec, int low, int high)
-{
-
-    // Selecting last element as the pivot
-    int pivot = vec[high]->dijkstra_custo_minimo;
-
-    // Index of elemment just before the last element
-    // It is used for swapping
-    int i = (low - 1);
-
-    for (int j = low; j <= high - 1; j++)
-    {
-
-        // If current element is smaller than or
-        // equal to pivot
-        if (vec[j]->dijkstra_custo_minimo <= pivot)
-        {
-            i++;
-            swap(vec[i], vec[j]);
-        }
-    }
-
-    // Put pivot to its position
-    swap(vec[i + 1], vec[high]);
-
-    // Return the point of partition
-    return (i + 1);
-}
-
-void quicksort_nos_dijkstra(vector<No *> &vec, int low, int high)
-{
-
-    // Base case: This part will be executed till the starting
-    // index low is lesser than the ending index high
-    if (low < high)
-    {
-
-        // pi is Partitioning Index, arr[p] is now at
-        // right place
-        int pi = partition(vec, low, high);
-
-        // Separately sort elements before and after the
-        // Partition Index pi
-        quicksort_nos_dijkstra(vec, low, pi - 1);
-        quicksort_nos_dijkstra(vec, pi + 1, high);
-    }
-}
-
 void Grafo::aux_retorna_chars_caminho_dijkstra(vector<char> &vec, char id_atual, char id_no_a)
 {
     No *no_atual = get_no(id_atual);
@@ -236,12 +187,14 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
 
     No *no_inicial = get_no(id_no_a);
 
+    //pegando nó de origem e inserindo na primeira posição
     no_inicial->dijkstra_custo_minimo = 0;
     no_inicial->dijkstra_responsavel = id_no_a;
     no_inicial->dijkstra_fechado = false;
 
     nos_abertos.push_back(no_inicial);
 
+    //para cada outro nó, inicializa como aberto, responsável = 0 e custo infinito
     for (int i = 0; i < lista_adj.size(); i++)
     {
         if (lista_adj[i]->id != id_no_a)
@@ -253,37 +206,41 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
         }
     }
 
-    // teste: c c b 2
+    //até no máximo n iterações
     for (int i = 0; i < lista_adj.size(); i++)
     {
-        No *no_custo_minimo = nos_abertos[i];
+        No *no_custo_minimo = nos_abertos[i]; //pega o primeiro elemento, que é sempre o de custo mínimo(para chegar) e fecha
         no_custo_minimo->dijkstra_fechado = true;
 
-        if (no_custo_minimo->id == id_no_b)
+        if (no_custo_minimo->id == id_no_b) //se é o destino, sai
         {
             break;
         }
 
-        for (int j = 0; j < no_custo_minimo->arestas.size(); j++)
+        for (int j = 0; j < no_custo_minimo->arestas.size(); j++) //para cada aresta do nó recém fechado
         {
             No *no_desatualizado = get_no(no_custo_minimo->arestas[j]->id_no_alvo);
             int custo_para_no_desatualizado = no_custo_minimo->arestas[j]->peso;
-            int novo_custo = no_custo_minimo->dijkstra_custo_minimo + custo_para_no_desatualizado;
+            int novo_custo = no_custo_minimo->dijkstra_custo_minimo + custo_para_no_desatualizado; //calcula novo custo para o nó de destino
 
-            if (!no_desatualizado->dijkstra_fechado)
+            if (!no_desatualizado->dijkstra_fechado) //se estiver aberto
             {
-                if (novo_custo < no_desatualizado->dijkstra_custo_minimo)
+                if (novo_custo < no_desatualizado->dijkstra_custo_minimo) //se o custo compensar
                 {
+                    //atualiza custo mínimo e responsável
                     no_desatualizado->dijkstra_custo_minimo = novo_custo;
                     no_desatualizado->dijkstra_responsavel = no_custo_minimo->id;
                 }
             }
         }
 
-        quicksort_nos_dijkstra(nos_abertos, i, nos_abertos.size() - 1);
+        //ordena para deixar o menor no início
+        sort(nos_abertos.begin(), nos_abertos.end(), [](No* no1, No* no2){
+            return no1->dijkstra_custo_minimo < no2->dijkstra_custo_minimo;
+        });
     }
 
-    aux_retorna_chars_caminho_dijkstra(resultante, id_no_b, id_no_a);
+    aux_retorna_chars_caminho_dijkstra(resultante, id_no_b, id_no_a); //insere os chars no vetor resultante
 
     return resultante;
 }
