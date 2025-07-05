@@ -154,7 +154,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
             if (pergunta_imprimir_arquivo("agm_kruskal.txt"))
             {
-                cout << "Metodo de impressao em arquivo nao implementado" << endl;
+                imprimir_grafo_arquivo(arvore_geradora_minima_kruskal, "agm_kruskal.txt");
             }
 
             delete arvore_geradora_minima_kruskal;
