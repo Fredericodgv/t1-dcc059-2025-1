@@ -720,14 +720,14 @@ int aux_calcula_excentricidade_no(char id_no) {
     if (!in_ponderado_aresta)
     {
         cout << "Nao e ponderado nas arestas" << endl;
-        return {};
+        return 0;
     }
 
     No* no_pedido = get_no(id_no);
     
     if (no_pedido->arestas.size() == 0) {
         cout << "No sem arestas" << endl;
-        return {};
+        return 0;
     }
 
     int exc_no = aux_calcula_distancia_nos(id_no, no_pedido->arestas[0]->id_no_alvo);
@@ -745,9 +745,15 @@ int aux_calcula_excentricidade_no(char id_no) {
 
 int Grafo::raio()
 {
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return 0;
+    }
+    
     if(lista_adj.size() == 0) {
         cout << "Nenhum no na lista" << endl;
-        return {};
+        return 0;
     }
 
     int raio = aux_calcula_excentricidade_no(lista_adj[0]->id);
@@ -765,9 +771,15 @@ int Grafo::raio()
 
 int Grafo::diametro()
 {
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return 0;
+    }
+
     if(lista_adj.size() == 0) {
         cout << "Nenhum no na lista" << endl;
-        return {};
+        return 0;
     }
 
     int diametro = aux_calcula_excentricidade_no(lista_adj[0]->id);
@@ -783,16 +795,60 @@ int Grafo::diametro()
     return diametro;
 }
 
+bool aux_verifica_vertice_central(char id_no) {
+
+    if(aux_calcula_excentricidade_no(id_no) == raio())
+        return true;
+    else
+        return false;
+
+    return 0;
+}
+
 vector<char> Grafo::centro()
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return {};
+    }
+
+    vector<char> vertices_centrais;
+
+    for(int i = 0; i < lista_adj.size(); i++) {
+        if(aux_verifica_vertice_central(lista.adj[i]->id))
+            vertices_centrais.push_back(lista.adj[i]->id);
+    }
+
+    return vertices_centrais;
+}
+
+bool aux_verifica_vertice_periferico(char id_no) {
+
+    if(aux_calcula_excentricidade_no(id_no) == diametro())
+        return true;
+    else
+        return false;
+
+    return 0;
 }
 
 vector<char> Grafo::periferia()
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    if (!in_ponderado_aresta)
+    {
+        cout << "Nao e ponderado nas arestas" << endl;
+        return {};
+    }
+
+    vector<char> vertices_perifericos;
+
+    for(int i = 0; i < lista_adj.size(); i++) {
+        if(aux_verifica_vertice_periferico(lista.adj[i]->id))
+            vertices_perifericos.push_back(lista.adj[i]->id);
+    }
+
+    return vertices_perifericos;
 }
 
 vector<char> Grafo::vertices_de_articulacao()
