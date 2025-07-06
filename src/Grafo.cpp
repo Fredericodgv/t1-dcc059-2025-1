@@ -191,10 +191,9 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no)
     // com o grafo  invertido, utiliza-se o mesmo metodo do fecho transitivo direto
     resultado = grafo_invertido->fecho_transitivo_direto(id_no);
 
-    
     // ordenando
     sort(resultado.begin(), resultado.end());
-    
+
     delete grafo_invertido;
     return resultado;
 }
@@ -279,7 +278,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
         }
 
         // ordena para deixar o menor no início
-        sort(nos_abertos.begin()+i+1, nos_abertos.end(), [](No *no1, No *no2)
+        sort(nos_abertos.begin() + i + 1, nos_abertos.end(), [](No *no1, No *no2)
              { return no1->dijkstra_custo_minimo < no2->dijkstra_custo_minimo; });
     }
 
@@ -479,10 +478,12 @@ Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
     return subgrafo;
 }
 
-bool Grafo::aux_e_conexo(){
+bool Grafo::aux_e_conexo()
+{
     int nos_alcancados = 0;
-    caminhamento_profundidade(lista_adj[0]->id, [&nos_alcancados](No*){nos_alcancados++;});
-    cout<<nos_alcancados<<endl;
+    caminhamento_profundidade(lista_adj[0]->id, [&nos_alcancados](No *)
+                              { nos_alcancados++; });
+    cout << nos_alcancados << endl;
     return nos_alcancados == lista_adj.size();
 };
 
@@ -495,7 +496,8 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 
     // grafo com os vértices pedidos
     Grafo *subgrafo = gerar_subgrafo(ids_nos);
-    if(!subgrafo->aux_e_conexo()){
+    if (!subgrafo->aux_e_conexo())
+    {
         return nullptr;
     }
 
@@ -566,13 +568,13 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         No *no_recem_adicionado = subgrafo->get_no(ids_nos[idx_aresta_minima]);
 
         for (Aresta *aresta_no_recem_adicionado : no_recem_adicionado->arestas)
-        {                                                                                     // para cada aresta do nó adicionado
+        {                                                                                    // para cada aresta do nó adicionado
             No *no_desatualizado = subgrafo->get_no(aresta_no_recem_adicionado->id_no_alvo); // pega o id alvo
             Aresta *aresta = aux_tem_aresta_para(no_desatualizado, no_recem_adicionado->id); // se tem aresta para o grafo resultante
 
             // pega o prox do novo nó acessível e vê se compensa substituir a aresta
             int idx_id = find(ids_nos.begin(), ids_nos.end(), no_desatualizado->id) - ids_nos.begin();
-            if (aresta->peso < custo[idx_id] && idx_id < ids_nos.size()-1)
+            if (aresta->peso < custo[idx_id] && idx_id < ids_nos.size() - 1)
             {
                 prox[idx_id] = no_recem_adicionado->id; // atualiza prox
                 custo[idx_id] = aresta->peso;
@@ -736,16 +738,18 @@ Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
     return arvore_profundidade;
 }
 
-int Grafo::aux_calcula_distancia_nos(char id_no_inicial, char id_no_final) {
+int Grafo::aux_calcula_distancia_nos(char id_no_inicial, char id_no_final)
+{
 
     vector<char> distancia = caminho_minimo_dijkstra(id_no_inicial, id_no_final);
     return distancia.size();
 }
 
-
-map<char, int> Grafo::bfs_calcula_distancias(char no_origem) {
+map<char, int> Grafo::bfs_calcula_distancias(char no_origem)
+{
     map<char, int> distancias;
-    for (No* no : lista_adj) {
+    for (No *no : lista_adj)
+    {
         distancias[no->id] = -1; // -1 significa não visitado
     }
 
@@ -753,14 +757,17 @@ map<char, int> Grafo::bfs_calcula_distancias(char no_origem) {
     distancias[no_origem] = 0;
     fila.push(no_origem);
 
-    while (!fila.empty()) {
+    while (!fila.empty())
+    {
         char id_atual = fila.front();
         fila.pop();
-        No* no_atual = get_no(id_atual);
+        No *no_atual = get_no(id_atual);
 
-        for (Aresta* aresta : no_atual->arestas) {
+        for (Aresta *aresta : no_atual->arestas)
+        {
             char id_vizinho = aresta->id_no_alvo;
-            if (distancias[id_vizinho] == -1) {
+            if (distancias[id_vizinho] == -1)
+            {
                 distancias[id_vizinho] = distancias[id_atual] + 1;
                 fila.push(id_vizinho);
             }
@@ -769,30 +776,39 @@ map<char, int> Grafo::bfs_calcula_distancias(char no_origem) {
     return distancias;
 }
 
-
-int Grafo::aux_calcula_excentricidade_no(char id_no_origem) {
+int Grafo::aux_calcula_excentricidade_no(char id_no_origem)
+{
     int excentricidade = 0;
 
-    if (in_ponderado_aresta) {
-        if (!floyd_gerado) {
+    if (in_ponderado_aresta)
+    {
+        if (!floyd_gerado)
+        {
             gera_floyd();
             floyd_gerado = true;
         }
 
         auto it = pos_id.find(id_no_origem);
-        if (it == pos_id.end()) return -1;
+        if (it == pos_id.end())
+            return -1;
         int indice_origem = it->second;
 
-        for (size_t j = 0; j < lista_adj.size(); ++j) {
+        for (size_t j = 0; j < lista_adj.size(); ++j)
+        {
             int dist = matriz_distancia[indice_origem][j];
-            if (dist != INT_MAX && dist > excentricidade) {
+            if (dist != INT_MAX && dist > excentricidade)
+            {
                 excentricidade = dist;
             }
         }
-    } else {
+    }
+    else
+    {
         map<char, int> distancias = bfs_calcula_distancias(id_no_origem);
-        for (auto const& par : distancias) {
-            if (par.second > excentricidade) {
+        for (auto const &par : distancias)
+        {
+            if (par.second > excentricidade)
+            {
                 excentricidade = par.second;
             }
         }
@@ -800,8 +816,10 @@ int Grafo::aux_calcula_excentricidade_no(char id_no_origem) {
     return excentricidade;
 }
 
-int Grafo::raio() {
-    if (lista_adj.empty()) {
+int Grafo::raio()
+{
+    if (lista_adj.empty())
+    {
         cout << "Grafo vazio." << endl;
         return 0;
     }
@@ -810,35 +828,43 @@ int Grafo::raio() {
     int valor_raio = aux_calcula_excentricidade_no(lista_adj[0]->id);
 
     // Itera sobre os demais nós para encontrar a menor excentricidade.
-    for (size_t i = 1; i < lista_adj.size(); ++i) {
+    for (size_t i = 1; i < lista_adj.size(); ++i)
+    {
         int excentricidade_aux = aux_calcula_excentricidade_no(lista_adj[i]->id);
-        if (excentricidade_aux < valor_raio) {
+        if (excentricidade_aux < valor_raio)
+        {
             valor_raio = excentricidade_aux;
         }
     }
     return valor_raio;
 }
 
-int Grafo::diametro() {
-    if (lista_adj.empty()) {
+int Grafo::diametro()
+{
+    if (lista_adj.empty())
+    {
         cout << "Grafo vazio." << endl;
         return 0;
     }
 
     int valor_diametro = 0;
     // Itera sobre todos os nós para encontrar a maior excentricidade.
-    for (No* no : lista_adj) {
+    for (No *no : lista_adj)
+    {
         int excentricidade_aux = aux_calcula_excentricidade_no(no->id);
-        if (excentricidade_aux > valor_diametro) {
+        if (excentricidade_aux > valor_diametro)
+        {
             valor_diametro = excentricidade_aux;
         }
     }
     return valor_diametro;
 }
 
-vector<char> Grafo::centro() {
+vector<char> Grafo::centro()
+{
     vector<char> vertices_centrais;
-    if (lista_adj.empty()) {
+    if (lista_adj.empty())
+    {
         cout << "Grafo vazio." << endl;
         return vertices_centrais;
     }
@@ -846,8 +872,10 @@ vector<char> Grafo::centro() {
     int valor_raio = this->raio();
 
     // Encontra todos os nós cuja excentricidade é igual ao raio.
-    for (No* no : lista_adj) {
-        if (aux_calcula_excentricidade_no(no->id) == valor_raio) {
+    for (No *no : lista_adj)
+    {
+        if (aux_calcula_excentricidade_no(no->id) == valor_raio)
+        {
             vertices_centrais.push_back(no->id);
         }
     }
@@ -855,19 +883,23 @@ vector<char> Grafo::centro() {
     return vertices_centrais;
 }
 
-vector<char> Grafo::periferia() {
+vector<char> Grafo::periferia()
+{
     vector<char> vertices_perifericos;
-    if (lista_adj.empty()) {
+    if (lista_adj.empty())
+    {
         cout << "Grafo vazio." << endl;
         return vertices_perifericos;
     }
-    
+
     // Calcula o diâmetro UMA VEZ.
     int valor_diametro = this->diametro();
 
     // Encontra todos os nós cuja excentricidade é igual ao diâmetro.
-    for (No* no : lista_adj) {
-        if (aux_calcula_excentricidade_no(no->id) == valor_diametro) {
+    for (No *no : lista_adj)
+    {
+        if (aux_calcula_excentricidade_no(no->id) == valor_diametro)
+        {
             vertices_perifericos.push_back(no->id);
         }
     }

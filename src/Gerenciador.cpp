@@ -116,23 +116,23 @@ void Gerenciador::comandos(Grafo *grafo)
         {
             imprimir_vector_arquivo(caminho_minimo_dijkstra, "output/caminho_minimo_dijkstra.txt", "Caminho: ");
         }
-        
+
         break;
     }
-    
+
     case 'd':
     {
-        
+
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
-        
+
         cout << "Caminho: ";
         for (int i = 0; i < caminho_minimo_floyd.size(); i++)
         {
             cout << caminho_minimo_floyd[i];
             if (i != caminho_minimo_floyd.size() - 1)
-            cout << ", ";
+                cout << ", ";
         }
         cout << endl;
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
@@ -233,7 +233,7 @@ void Gerenciador::comandos(Grafo *grafo)
         int diametro = grafo->diametro();
         cout << "Diametro: " << diametro << endl;
         cout << endl;
-                
+
         vector<char> centro = grafo->centro();
         cout << "Centro: ";
         imprimir_vector_tela(centro);
@@ -243,7 +243,6 @@ void Gerenciador::comandos(Grafo *grafo)
         cout << "Periferia: ";
         imprimir_vector_tela(periferia);
         cout << endl;
-
 
         if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
         {
