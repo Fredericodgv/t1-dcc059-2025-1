@@ -279,7 +279,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
         }
 
         // ordena para deixar o menor no início
-        sort(nos_abertos.begin(), nos_abertos.end(), [](No *no1, No *no2)
+        sort(nos_abertos.begin()+i, nos_abertos.end(), [](No *no1, No *no2)
              { return no1->dijkstra_custo_minimo < no2->dijkstra_custo_minimo; });
     }
 
