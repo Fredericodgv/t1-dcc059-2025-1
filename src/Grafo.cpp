@@ -730,29 +730,57 @@ int aux_calcula_excentricidade_no(char id_no) {
         return {};
     }
 
-    int exc_no_1 = aux_calcula_distancia_nos(id_no, no_pedido->arestas[0]->id_no_alvo);
-    int exc_no_2;
+    int exc_no = aux_calcula_distancia_nos(id_no, no_pedido->arestas[0]->id_no_alvo);
+    int exc_no_aux;
 
     for(int i = 1; i < no_pedido->arestas.size(); i++) {
 
-        exc_no_2 = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo)
-        if(exc_no_1 < exc_no_2)
-        exc_no_1 = exc_no_2;
+        exc_no_aux = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo)
+        if(exc_no < exc_no_aux)
+            exc_no = exc_no_aux;
     }
 
-    return exc_no_1;
+    return exc_no;
 }
 
 int Grafo::raio()
 {
-    cout << "Metodo nao implementado" << endl;
-    return 0;
+    if(lista_adj.size() == 0) {
+        cout << "Nenhum no na lista" << endl;
+        return {};
+    }
+
+    int raio = aux_calcula_excentricidade_no(lista_adj[0]->id);
+    int raio_aux;
+
+    for(int i = 1; i < lista_adj.size(); i++) {
+        
+        raio_aux = aux_calcula_excentricidade_no(lista_adj[i]->id);
+        if(raio_aux < raio)
+            raio = raio_aux;
+    }
+
+    return raio;
 }
 
 int Grafo::diametro()
 {
-    cout << "Metodo nao implementado" << endl;
-    return 0;
+    if(lista_adj.size() == 0) {
+        cout << "Nenhum no na lista" << endl;
+        return {};
+    }
+
+    int diametro = aux_calcula_excentricidade_no(lista_adj[0]->id);
+    int diametro_aux;
+
+    for(int i = 1; i < lista_adj.size(); i++) {
+        
+        diametro_aux = aux_calcula_excentricidade_no(lista_adj[i]->id);
+        if(diametro < diametro_aux)
+            diametro = diametro_aux;
+    }
+
+    return diametro;
 }
 
 vector<char> Grafo::centro()
