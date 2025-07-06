@@ -726,18 +726,13 @@ Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
     return arvore_profundidade;
 }
 
-int aux_calcula_distancia_nos(char id_no_inicial, char id_no_final) {
+int Grafo::aux_calcula_distancia_nos(char id_no_inicial, char id_no_final) {
 
-    return caminho_minimo_dijkstra(id_no_inicial, id_no_final).size();
+    vector<char> distancia = caminho_minimo_dijkstra(id_no_inicial, id_no_final);
+    return distancia.size();
 }
 
-int aux_calcula_excentricidade_no(char id_no) {
-    
-    if (!in_ponderado_aresta)
-    {
-        cout << "Nao e ponderado nas arestas" << endl;
-        return 0;
-    }
+int Grafo::aux_calcula_excentricidade_no(char id_no) {
 
     No* no_pedido = get_no(id_no);
     
@@ -751,7 +746,7 @@ int aux_calcula_excentricidade_no(char id_no) {
 
     for(int i = 1; i < no_pedido->arestas.size(); i++) {
 
-        exc_no_aux = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo)
+        exc_no_aux = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo);
         if(exc_no < exc_no_aux)
             exc_no = exc_no_aux;
     }
@@ -811,7 +806,7 @@ int Grafo::diametro()
     return diametro;
 }
 
-bool aux_verifica_vertice_central(char id_no) {
+bool Grafo::aux_verifica_vertice_central(char id_no) {
 
     if(aux_calcula_excentricidade_no(id_no) == raio())
         return true;
@@ -832,14 +827,14 @@ vector<char> Grafo::centro()
     vector<char> vertices_centrais;
 
     for(int i = 0; i < lista_adj.size(); i++) {
-        if(aux_verifica_vertice_central(lista.adj[i]->id))
-            vertices_centrais.push_back(lista.adj[i]->id);
+        if(aux_verifica_vertice_central(lista_adj[i]->id))
+            vertices_centrais.push_back(lista_adj[i]->id);
     }
 
     return vertices_centrais;
 }
 
-bool aux_verifica_vertice_periferico(char id_no) {
+bool Grafo::aux_verifica_vertice_periferico(char id_no) {
 
     if(aux_calcula_excentricidade_no(id_no) == diametro())
         return true;
@@ -860,8 +855,8 @@ vector<char> Grafo::periferia()
     vector<char> vertices_perifericos;
 
     for(int i = 0; i < lista_adj.size(); i++) {
-        if(aux_verifica_vertice_periferico(lista.adj[i]->id))
-            vertices_perifericos.push_back(lista.adj[i]->id);
+        if(aux_verifica_vertice_periferico(lista_adj[i]->id))
+            vertices_perifericos.push_back(lista_adj[i]->id);
     }
 
     return vertices_perifericos;

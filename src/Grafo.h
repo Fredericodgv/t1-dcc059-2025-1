@@ -35,6 +35,10 @@ public:
     void caminhamento_profundidade(char id_no, function<void (No*)> funcao_caminhamento, Grafo* arvore = nullptr);
     void aux_insere_aresta_arvore_caminhamento(Grafo *arvore, No *no);
     void aux_reseta_visitas();
+    int aux_calcula_distancia_nos(char id_no_inicial, char id_no_final);
+    int aux_calcula_excentricidade_no(char id_no);
+    bool aux_verifica_vertice_central(char id_no);
+    bool aux_verifica_vertice_periferico(char id_no);
 
     void aux_fecho_transitivo_direto(No* no, vector<char> &resultado);
 
