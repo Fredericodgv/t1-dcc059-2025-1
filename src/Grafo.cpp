@@ -483,7 +483,6 @@ bool Grafo::aux_e_conexo()
     int nos_alcancados = 0;
     caminhamento_profundidade(lista_adj[0]->id, [&nos_alcancados](No *)
                               { nos_alcancados++; });
-    cout << nos_alcancados << endl;
     return nos_alcancados == lista_adj.size();
 };
 
@@ -605,6 +604,11 @@ void unite_sets(map<char, char> &parent, char u, char v)
 Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
 {
     if (!in_ponderado_aresta || in_direcionado)
+    {
+        return nullptr;
+    }
+    Grafo *subgrafo = gerar_subgrafo(ids_nos);
+    if (!subgrafo->aux_e_conexo())
     {
         return nullptr;
     }

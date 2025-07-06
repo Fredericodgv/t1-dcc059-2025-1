@@ -190,9 +190,11 @@ void Gerenciador::comandos(Grafo *grafo)
             Grafo *arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
             if (arvore_geradora_minima_kruskal == nullptr)
             {
-                cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+                cout << "Grafo nao ponderado nas arestas, direcionado ou desconexo." << endl;
+
                 break;
             }
+
             arvore_geradora_minima_kruskal->imprimir_lista_adjacencia();
 
             if (pergunta_imprimir_arquivo("agm_kruskal.txt"))
