@@ -433,7 +433,6 @@ Aresta *Grafo::aux_aresta_custo_minimo_grafo(Grafo *grafo, vector<char> *ids_nos
                 menor_aresta = grafo->lista_adj[i]->arestas[j];
                 u = grafo->get_no(no_temporario->id);
                 v = grafo->get_no(no_temporario->arestas[j]->id_no_alvo);
-                // cout<<u->id<<" "<<v->id<<" "<< menor_aresta->peso<<endl;
             }
         }
     }
@@ -487,7 +486,6 @@ Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
         no->arestas.erase(it, no->arestas.end());
     }
 
-    subgrafo->imprimir_lista_adjacencia();
     return subgrafo;
 }
 
