@@ -23,6 +23,7 @@ public:
     ~Grafo();
 
     void imprimir_lista_adjacencia();
+    bool aux_e_conexo();
 
     bool adicionar_vertice(char id, int peso = 0);
     bool adicionar_aresta_grafo(char id_no_origem, char id_no_destino, int peso = 0);

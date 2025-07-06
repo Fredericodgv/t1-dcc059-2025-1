@@ -191,11 +191,11 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no)
     // com o grafo  invertido, utiliza-se o mesmo metodo do fecho transitivo direto
     resultado = grafo_invertido->fecho_transitivo_direto(id_no);
 
-    delete grafo_invertido;
-
+    
     // ordenando
     sort(resultado.begin(), resultado.end());
-
+    
+    delete grafo_invertido;
     return resultado;
 }
 
@@ -279,7 +279,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
         }
 
         // ordena para deixar o menor no início
-        sort(nos_abertos.begin()+i, nos_abertos.end(), [](No *no1, No *no2)
+        sort(nos_abertos.begin()+i+1, nos_abertos.end(), [](No *no1, No *no2)
              { return no1->dijkstra_custo_minimo < no2->dijkstra_custo_minimo; });
     }
 
@@ -479,6 +479,13 @@ Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
     return subgrafo;
 }
 
+bool Grafo::aux_e_conexo(){
+    int nos_alcancados = 0;
+    caminhamento_profundidade(lista_adj[0]->id, [&nos_alcancados](No*){nos_alcancados++;});
+    cout<<nos_alcancados<<endl;
+    return nos_alcancados == lista_adj.size();
+};
+
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
     if (!in_ponderado_aresta || in_direcionado)
@@ -486,9 +493,11 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         return nullptr;
     }
 
-    int arestas_peso_infinito = 0;
     // grafo com os vértices pedidos
     Grafo *subgrafo = gerar_subgrafo(ids_nos);
+    if(!subgrafo->aux_e_conexo()){
+        return nullptr;
+    }
 
     // iniciando grafo resultante
     Grafo *arvore_prim = new Grafo(ids_nos.size(), 0, 1, 1);
@@ -575,6 +584,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         custo[idx_aresta_minima] = INT_MAX;
     }
 
+    delete u, v, aresta_inicial;
     return arvore_prim;
 }
 
