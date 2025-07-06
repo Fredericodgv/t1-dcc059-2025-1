@@ -4,3 +4,6 @@ compile:
 
 run: compile
 	./exec.exe $(word 2, $(MAKECMDGOALS))
+
+clean:
+	rm -f exec.exe
