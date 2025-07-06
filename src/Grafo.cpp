@@ -732,26 +732,34 @@ int Grafo::aux_calcula_distancia_nos(char id_no_inicial, char id_no_final) {
     return distancia.size();
 }
 
-int Grafo::aux_calcula_excentricidade_no(char id_no) {
-
-    No* no_pedido = get_no(id_no);
-    
-    if (no_pedido->arestas.size() == 0) {
-        cout << "No sem arestas" << endl;
-        return 0;
+int Grafo::aux_calcula_excentricidade_no(char id_no_origem) {
+    if (!floyd_gerado) {
+        gera_floyd();
+        floyd_gerado = true;
     }
 
-    int exc_no = aux_calcula_distancia_nos(id_no, no_pedido->arestas[0]->id_no_alvo);
-    int exc_no_aux;
+    // Obtém o índice da matriz correspondente ao ID do nó.
+    auto it = pos_id.find(id_no_origem);
+    if (it == pos_id.end()) {
+        cout << "Erro: Nó " << id_no_origem << " não existe no grafo." << endl;
+        return -1; // Retorna um valor de erro.
+    }
+    int indice_origem = it->second;
 
-    for(int i = 1; i < no_pedido->arestas.size(); i++) {
+    int excentricidade = 0;
+    int n = lista_adj.size();
 
-        exc_no_aux = aux_calcula_distancia_nos(id_no, no_pedido->arestas[i]->id_no_alvo);
-        if(exc_no < exc_no_aux)
-            exc_no = exc_no_aux;
+    // Este valor é o máximo na linha do nó na matriz de distâncias.
+    for (int j = 0; j < n; ++j) {
+        int distancia_atual = matriz_distancia[indice_origem][j];
+
+        // Considera apenas nós alcançáveis (distância finita).
+        if (distancia_atual != INT_MAX && distancia_atual > excentricidade) {
+            excentricidade = distancia_atual;
+        }
     }
 
-    return exc_no;
+    return excentricidade;
 }
 
 int Grafo::raio()
