@@ -12,6 +12,7 @@
 #include <vector>
 #include <algorithm>
 #include <limits>
+#include <queue>
 
 using namespace std;
 class Grafo
@@ -39,6 +40,7 @@ public:
     int aux_calcula_excentricidade_no(char id_no);
     bool aux_verifica_vertice_central(char id_no);
     bool aux_verifica_vertice_periferico(char id_no);
+    map<char, int> bfs_calcula_distancias(char no_origem);
 
     void aux_fecho_transitivo_direto(No* no, vector<char> &resultado);
 
