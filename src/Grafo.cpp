@@ -584,7 +584,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         custo[idx_aresta_minima] = INT_MAX;
     }
 
-    delete u, v, aresta_inicial;
+    delete u, v;
     return arvore_prim;
 }
 
