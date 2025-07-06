@@ -156,7 +156,7 @@ void Gerenciador::comandos(Grafo *grafo)
             Grafo *arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
             if (arvore_geradora_minima_prim == nullptr)
             {
-                cout << "Grafo nao ponderado nas arestas ou direcionado." << endl;
+                cout << "Grafo nao ponderado nas arestas, direcionado ou desconexo." << endl;
                 break;
             }
             arvore_geradora_minima_prim->imprimir_lista_adjacencia();
