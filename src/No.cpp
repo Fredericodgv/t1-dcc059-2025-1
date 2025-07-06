@@ -1,4 +1,5 @@
 #include "No.h"
+#include <algorithm>
 
 No::No()
 {

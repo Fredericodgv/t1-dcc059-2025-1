@@ -475,6 +475,19 @@ Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
         }
     }
 
+    //removendo arestas duplicadas
+    for (int i = 0; i < ids_nos.size(); i++)
+    {
+        No *no = subgrafo->get_no(ids_nos[i]);
+
+        sort(no->arestas.begin(), no->arestas.end(), [](Aresta *a, Aresta *b)
+             { return a->id_no_alvo < b->id_no_alvo; });
+        auto it = unique(no->arestas.begin(), no->arestas.end(), [](Aresta *a, Aresta *b)
+                         { return a->id_no_alvo == b->id_no_alvo; });
+        no->arestas.erase(it, no->arestas.end());
+    }
+
+    subgrafo->imprimir_lista_adjacencia();
     return subgrafo;
 }
 
