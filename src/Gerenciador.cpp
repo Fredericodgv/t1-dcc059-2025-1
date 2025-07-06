@@ -228,13 +228,54 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'h':
     {
-        vector<char> articulacao = grafo->vertices_de_articulacao();
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        int raio = grafo->raio();
+        cout << "Raio: " << raio << endl;
+        int diametro = grafo->diametro();
+        cout << "Diametro: " << diametro << endl;
+        cout << endl;
+                
+        vector<char> centro = grafo->centro();
+        cout << "Centro: ";
+        imprimir_vector_tela(centro);
+        cout << endl;
+
+        vector<char> periferia = grafo->periferia();
+        cout << "Periferia: ";
+        imprimir_vector_tela(periferia);
+        cout << endl;
+
 
         if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
         {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl;
+            ofstream arquivo("output/raio_diametro_centro_periferia.txt");
+            if (arquivo.is_open())
+            {
+                arquivo << "Raio: " << raio << endl;
+                arquivo << "Diametro: " << diametro << endl;
+                arquivo << "Centro: ";
+                for (int i = 0; i < centro.size(); i++)
+                {
+                    arquivo << centro[i];
+                    if (i != centro.size() - 1)
+                        arquivo << ", ";
+                }
+                arquivo << endl;
+
+                arquivo << "Periferia: ";
+                for (int i = 0; i < periferia.size(); i++)
+                {
+                    arquivo << periferia[i];
+                    if (i != periferia.size() - 1)
+                        arquivo << ", ";
+                }
+                arquivo << endl;
+
+                arquivo.close();
+            }
+            else
+            {
+                cout << "Erro ao abrir o arquivo para escrita." << endl;
+            }
         }
 
         break;
