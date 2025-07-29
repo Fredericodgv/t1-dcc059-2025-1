@@ -944,4 +944,5 @@ Grafo *Grafo::conjunto_dominante_conexo_reativo()
 {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
-}
+} 
+ 
