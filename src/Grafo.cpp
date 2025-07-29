@@ -474,7 +474,7 @@ Grafo *Grafo::gerar_subgrafo(vector<char> ids_nos)
         }
     }
 
-    //removendo arestas duplicadas
+    // removendo arestas duplicadas
     for (int i = 0; i < ids_nos.size(); i++)
     {
         No *no = subgrafo->get_no(ids_nos[i]);
@@ -926,4 +926,22 @@ vector<char> Grafo::vertices_de_articulacao()
 {
     cout << "Metodo nao implementado" << endl;
     return {};
+}
+
+Grafo *Grafo::conjunto_dominante_conexo()
+{
+    cout << "Metodo nao implementado" << endl;
+    return nullptr;
+}
+
+Grafo *Grafo::conjunto_dominante_conexo_randomizado()
+{
+    cout << "Metodo nao implementado" << endl;
+    return nullptr;
+}
+
+Grafo *Grafo::conjunto_dominante_conexo_minimo_reativo()
+{
+    cout << "Metodo nao implementado" << endl;
+    return nullptr;
 }
