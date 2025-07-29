@@ -940,7 +940,7 @@ Grafo *Grafo::conjunto_dominante_conexo_randomizado()
     return nullptr;
 }
 
-Grafo *Grafo::conjunto_dominante_conexo_minimo_reativo()
+Grafo *Grafo::conjunto_dominante_conexo_reativo()
 {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
