@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "Gerenciador.h"
+#include "AlgoritmosGulosos.h"
 
 using namespace std;
 int main(int argc, char *argv[])
@@ -21,7 +22,13 @@ int main(int argc, char *argv[])
 
     //grafo->imprimir_lista_adjacencia();
 
-    Gerenciador::comandos(grafo);
+    Grafo* resultado = AlgoritmosGulosos::conjunto_dominante(grafo);
+
+    resultado->imprimir_lista_adjacencia();
+
+    //grafo->imprimir_lista_adjacencia();
+
+    //Gerenciador::comandos(grafo);
 
     return 0;
 }
