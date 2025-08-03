@@ -1,4 +1,5 @@
 #include "Gerenciador.h"
+#include "AlgoritmosGulosos.h"
 
 void Gerenciador::imprimir_vector_tela(vector<char> &resultado)
 {
@@ -43,6 +44,7 @@ void Gerenciador::comandos(Grafo *grafo)
     cout << "(f) Arvore Geradora Minima (Algoritmo de Kruskal);" << endl;
     cout << "(g) Arvore de caminhamento em profundidade;" << endl;
     cout << "(h) Raio, diametro, centro e periferia do grafo;" << endl;
+    cout << "(j) Gulosos;" << endl;
     cout << "(0) Sair;" << endl
          << endl;
 
@@ -292,6 +294,14 @@ void Gerenciador::comandos(Grafo *grafo)
         {
             cout << "Metodo de impressao em arquivo nao implementado" << endl;
         }
+
+        break;
+    }
+
+    case 'j':
+    {
+        vector<float> alfas = {0.15, 0.30, 0.40, 0.50};
+        Grafo* resultante = AlgoritmosGulosos::conjunto_dominante_reativo(grafo, alfas, 1, 1);
 
         break;
     }

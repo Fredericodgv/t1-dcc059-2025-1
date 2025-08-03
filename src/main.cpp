@@ -22,13 +22,13 @@ int main(int argc, char *argv[])
 
     //grafo->imprimir_lista_adjacencia();
 
-    Grafo* resultado = AlgoritmosGulosos::conjunto_dominante(grafo);
+    //Grafo* resultado = AlgoritmosGulosos::conjunto_dominante_reativo(grafo,);
 
-    resultado->imprimir_lista_adjacencia();
+    //resultado->imprimir_lista_adjacencia();
 
     //grafo->imprimir_lista_adjacencia();
 
-    //Gerenciador::comandos(grafo);
+    Gerenciador::comandos(grafo);
 
     return 0;
 }
