@@ -927,22 +927,3 @@ vector<char> Grafo::vertices_de_articulacao()
     cout << "Metodo nao implementado" << endl;
     return {};
 }
-
-Grafo *Grafo::conjunto_dominante_conexo()
-{
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
-}
-
-Grafo *Grafo::conjunto_dominante_conexo_randomizado()
-{
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
-}
-
-Grafo *Grafo::conjunto_dominante_conexo_reativo()
-{
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
-} 
- 

@@ -72,10 +72,6 @@ public:
     vector<vector<char>> matriz_predecessor;
     bool floyd_gerado = false;
 
-    // Algoritmos gulosos para conjunto dominante conexo (connected dominating set)
-    Grafo *conjunto_dominante_conexo();
-    Grafo *conjunto_dominante_conexo_randomizado();
-    Grafo *conjunto_dominante_conexo_reativo();
 
 private:
     void gera_floyd();                                        // Gera as matrizes de Floyd se necessário
