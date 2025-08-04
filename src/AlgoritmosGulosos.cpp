@@ -69,7 +69,12 @@ Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
     return solucao;
 }
 
-// --- Algoritmo Guloso Randomizado ---
+/*
+@brief Implementa o algoritmo guloso randomizado para encontrar um conjunto dominante em um grafo.
+@param grafo Ponteiro para o grafo de entrada.
+@param alfa Fator de aleatoriedade (entre 0 e 1).
+@return Ponteiro para o grafo resultante contendo o conjunto dominante.
+*/
 
 Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alfa)
 {
@@ -242,6 +247,15 @@ bool comp_nos(No *a, No *b)
     else
         return false;
 }
+
+/*
+@brief Implementa o algoritmo guloso reativo para encontrar um conjunto dominante em um grafo.
+@param grafo Ponteiro para o grafo de entrada.
+@param alfas Vetor de fatores de aleatoriedade (entre 0 e 1).
+@param iteracoes Número de iterações a serem realizadas.
+@param tamanho_bloco Tamanho do bloco para recalcular as probabilidades.
+@return Ponteiro para o grafo resultante contendo o conjunto dominante.
+*/
 
 Grafo *AlgoritmosGulosos::conjunto_dominante_reativo(Grafo *grafo, vector<float> &alfas, int iteracoes, int tamanho_bloco)
 {
