@@ -6,10 +6,9 @@
 class AlgoritmosGulosos
 {
 public:
-
-    static Grafo* conjunto_dominante(Grafo* grafo);
-    static Grafo* conjunto_dominante_randomizado(Grafo* grafo);
-    static Grafo* conjunto_dominante_reativo(Grafo* grafo, vector<float> &alfas, int iteracoes, int tamanho_bloco);
+    static Grafo *conjunto_dominante(Grafo *grafo);
+    static Grafo *conjunto_dominante_randomizado(Grafo *grafo, float alfa = 0.5f);
+    static Grafo *conjunto_dominante_reativo(Grafo *grafo, vector<float> &alfas, int iteracoes, int tamanho_bloco);
 };
 
 #endif // ALGORITMOS_GULOSOS_H

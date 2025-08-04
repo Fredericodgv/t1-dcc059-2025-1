@@ -2,19 +2,147 @@
 #include <vector>
 #include <set>
 #include <algorithm>
-#include <random> // Necessário para a randomização
-#include <chrono> // Necessário para uma semente de tempo de alta qualidade
+#include <random>
+#include <chrono>
 
-// --- Algoritmo Guloso Padrão ---
+/*
+@brief Implementa o algoritmo guloso padrão para encontrar um conjunto dominante em um grafo.
+@param grafo Ponteiro para o grafo de entrada.
+@return Ponteiro para o grafo resultante contendo o conjunto dominante.
+*/
 
 Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
 {
+    std::set<No *> nos_nao_cobertos;
+    for (No *no : grafo->lista_adj)
+    {
+        nos_nao_cobertos.insert(no);
+    }
+
+    Grafo *solucao = new Grafo();
+
+    while (!nos_nao_cobertos.empty())
+    {
+        No *melhor_no_candidato = nullptr;
+        int max_cobertura = -1;
+
+        for (No *no_candidato : grafo->lista_adj)
+        {
+            int cobertura_atual = 0;
+
+            if (nos_nao_cobertos.count(no_candidato))
+            {
+                cobertura_atual++;
+            }
+
+            for (Aresta *aresta : no_candidato->arestas)
+            {
+                No *vizinho = grafo->get_no(aresta->id_no_alvo);
+                if (nos_nao_cobertos.count(vizinho))
+                {
+                    cobertura_atual++;
+                }
+            }
+
+            if (cobertura_atual > max_cobertura)
+            {
+                max_cobertura = cobertura_atual;
+                melhor_no_candidato = no_candidato;
+            }
+        }
+
+        if (melhor_no_candidato != nullptr)
+        {
+            solucao->adicionar_vertice(melhor_no_candidato->id);
+
+            nos_nao_cobertos.erase(melhor_no_candidato);
+            for (Aresta *aresta : melhor_no_candidato->arestas)
+            {
+                No *vizinho = grafo->get_no(aresta->id_no_alvo);
+                nos_nao_cobertos.erase(vizinho);
+            }
+        }
+    }
+
+    solucao->ordem = solucao->lista_adj.size();
+
+    return solucao;
 }
 
 // --- Algoritmo Guloso Randomizado ---
 
-Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo)
+Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alfa)
 {
+    alfa = std::max(0.0f, std::min(1.0f, alfa));
+
+    std::set<No *> nos_nao_cobertos;
+    for (No *no : grafo->lista_adj)
+    {
+        nos_nao_cobertos.insert(no);
+    }
+
+    Grafo *solucao = new Grafo();
+
+    std::mt19937 gerador(std::chrono::system_clock::now().time_since_epoch().count());
+
+    while (!nos_nao_cobertos.empty())
+    {
+        std::vector<std::pair<No *, int>> candidatos_com_utilidade;
+
+        for (No *no_candidato : grafo->lista_adj)
+        {
+            int cobertura_atual = 0;
+            if (nos_nao_cobertos.count(no_candidato))
+            {
+                cobertura_atual++;
+            }
+            for (Aresta *aresta : no_candidato->arestas)
+            {
+                No *vizinho = grafo->get_no(aresta->id_no_alvo);
+                if (nos_nao_cobertos.count(vizinho))
+                {
+                    cobertura_atual++;
+                }
+            }
+
+            if (cobertura_atual > 0)
+            {
+                candidatos_com_utilidade.push_back({no_candidato, cobertura_atual});
+            }
+        }
+
+        if (candidatos_com_utilidade.empty())
+        {
+            break;
+        }
+
+        std::sort(candidatos_com_utilidade.begin(), candidatos_com_utilidade.end(),
+                  [](const auto &a, const auto &b)
+                  {
+                      return a.second > b.second;
+                  });
+
+        int tamanho_lcr = static_cast<int>(std::ceil(alfa * candidatos_com_utilidade.size()));
+        tamanho_lcr = std::max(1, tamanho_lcr);
+        tamanho_lcr = std::min(tamanho_lcr, (int)candidatos_com_utilidade.size());
+
+        std::uniform_int_distribution<> dist(0, tamanho_lcr - 1);
+        int idx_aleatorio = dist(gerador);
+        No *no_escolhido = candidatos_com_utilidade[idx_aleatorio].first;
+
+        solucao->adicionar_vertice(no_escolhido->id);
+
+        nos_nao_cobertos.erase(no_escolhido);
+        for (Aresta *aresta : no_escolhido->arestas)
+        {
+            No *vizinho = grafo->get_no(aresta->id_no_alvo);
+            nos_nao_cobertos.erase(vizinho);
+        }
+    }
+
+    solucao->ordem = solucao->lista_adj.size();
+
+    return solucao;
 }
 
 // --- Algoritmo Guloso Reativo ---
@@ -214,10 +342,3 @@ Grafo *AlgoritmosGulosos::conjunto_dominante_reativo(Grafo *grafo, vector<float>
 
     return new Grafo(4, 1, 1, 0);
 }
-// pseudo codigo
-/*
-Enquanto houver nó não afetado {
-
-}
-
-*/
