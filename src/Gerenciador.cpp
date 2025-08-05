@@ -300,6 +300,11 @@ void Gerenciador::comandos(Grafo *grafo)
         break;
     }
 
+    /**
+     * @brief Algoritmo Guloso
+     *
+     * @details Este algoritmo executa o conjunto dominante guloso, que é uma abordagem gulosa para encontrar um conjunto dominante em um grafo.
+     */
     case 'j':
     {
         vector<char> resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
@@ -309,11 +314,29 @@ void Gerenciador::comandos(Grafo *grafo)
 
         break;
     }
+    /**
+     * @brief Algoritmo Guloso Randomizado
+     *
+     * @details Este algoritmo executa o conjunto dominante randomizado n vezes, onde n é o número de iterações fornecido pelo usuário.
+     */
     case 'k':
     {
-        float alfa = 0.5f; // Valor padrão
-        vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
-        // guloso randomizado
+        float alfa;
+
+        int interacoes;
+        cout << "Digite o numero de iteracoes: " << endl;
+        cin >> interacoes;
+
+        cout << "Digite o valor de alfa (0 a 1): ";
+        cin >> alfa;
+
+        while (alfa < 0 || alfa > 1)
+        {
+            cout << "Valor invalido, digite novamente." << endl;
+            cin >> alfa;
+        }
+
+        vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, interacoes, alfa);
 
         cout << "Conjunto Dominante (Guloso Randomizado): ";
         imprimir_vector_tela(resultante);
@@ -321,11 +344,21 @@ void Gerenciador::comandos(Grafo *grafo)
 
         break;
     }
+    /**
+     * @brief Algoritmo Guloso Reativo
+     *
+     * @details Este algoritmo executa o conjunto dominante reativo n vezes, onde n é o número de iterações fornecido pelo usuário.
+     */
     case 'l':
     {
-        // guloso reativo
-        vector<float> alfas = {0.15, 0.30, 0.40, 0.50};
-        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, 5, alfas, 20, 5);
+        vector<float> alfas = {0.1f, 0.3f, 0.5f, 0.7f, 0.9f};
+        int iteracoes, iteracoes_reativo;
+        cout << "Digite o numero de iteracoes: " << endl;
+        cin >> iteracoes;
+        cout << "Digite o numero de iteracoes reativo: " << endl;
+        cin >> iteracoes_reativo;
+
+        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, 5);
 
         cout << "Conjunto Dominante (Guloso Reativo): ";
         imprimir_vector_tela(resultante);
