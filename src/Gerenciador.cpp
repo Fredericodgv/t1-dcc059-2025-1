@@ -308,8 +308,12 @@ void Gerenciador::comandos(Grafo *grafo)
     case 'k':
     {
         float alfa = 0.5f; // Valor padrão
-        AlgoritmosGulosos::conjunto_dominante_randomizado(grafo, alfa);
+        Grafo* solucao = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
         // guloso randomizado
+
+        solucao->imprimir_lista_adjacencia();
+
+        delete solucao;
         break;
     }
     case 'l':
