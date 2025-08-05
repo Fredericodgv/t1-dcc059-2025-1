@@ -351,14 +351,16 @@ void Gerenciador::comandos(Grafo *grafo)
      */
     case 'l':
     {
-        vector<float> alfas = {0.1f, 0.3f, 0.5f, 0.7f, 0.9f};
+        vector<float> alfas = {0.05f, 0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.70f};
         int iteracoes, iteracoes_reativo;
         cout << "Digite o numero de iteracoes: " << endl;
         cin >> iteracoes;
         cout << "Digite o numero de iteracoes reativo: " << endl;
         cin >> iteracoes_reativo;
 
-        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, 5);
+        int tamanho_bloco = max(iteracoes_reativo / 10, 1);
+
+        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
 
         cout << "Conjunto Dominante (Guloso Reativo): ";
         imprimir_vector_tela(resultante);
