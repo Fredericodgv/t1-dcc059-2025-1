@@ -5,11 +5,11 @@
 #include <random>
 #include <chrono>
 
-/*
-@brief Implementa o algoritmo guloso padrão para encontrar um conjunto dominante em um grafo.
-@param grafo Ponteiro para o grafo de entrada.
-@return Ponteiro para o grafo resultante contendo o conjunto dominante.
-*/
+/**
+ * @brief Implementa o algoritmo guloso padrão para encontrar um conjunto dominante em um grafo.
+ * @param grafo Ponteiro para o grafo de entrada.
+ * @return Ponteiro para o grafo resultante contendo o conjunto dominante.
+ */
 
 Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
 {
@@ -70,7 +70,7 @@ Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
     return solucao;
 }
 
-/*
+/** 
  * @brief Implementa o algoritmo guloso randomizado para encontrar um conjunto dominante em um grafo.
  * @param grafo Ponteiro para o grafo de entrada.
  * @param alfa Fator de aleatoriedade (entre 0 e 1).
@@ -155,16 +155,12 @@ Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alf
 /**
  * @brief Executa o algoritmo guloso randomizado 'n' vezes e retorna a melhor solução.
  *
- * Esta função atua como um invólucro para o algoritmo randomizado,
- * executando-o múltiplas vezes para explorar diferentes caminhos de solução.
- * A "melhor" solução é definida como aquela que possui o menor conjunto
- * dominante (menor ordem do grafo de solução).
- *
  * @param grafo O grafo de entrada para o qual o conjunto dominante será encontrado.
  * @param n_iteracoes O número de vezes que o algoritmo randomizado será executado.
  * @param alfa O parâmetro de aleatoriedade (0 <= alfa <= 1) a ser usado em cada execução.
  * @return Um ponteiro para o melhor objeto Grafo encontrado entre todas as iterações.
  */
+
 Grafo* AlgoritmosGulosos::executar_randomizado_n_vezes(Grafo* grafo, int n_iteracoes, float alfa)
 {
     Grafo* melhor_solucao_encontrada = nullptr;
