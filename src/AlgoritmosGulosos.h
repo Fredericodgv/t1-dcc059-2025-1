@@ -9,6 +9,7 @@ public:
     static Grafo *conjunto_dominante(Grafo *grafo);
     static Grafo *conjunto_dominante_randomizado(Grafo *grafo, float alfa = 0.5f);
     static Grafo *conjunto_dominante_reativo(Grafo *grafo, vector<float> &alfas, int iteracoes, int tamanho_bloco);
+    static Grafo* executar_randomizado_n_vezes(Grafo* grafo, int n_iteracoes, float alfa);
 };
 
 #endif // ALGORITMOS_GULOSOS_H

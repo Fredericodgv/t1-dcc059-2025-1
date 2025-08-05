@@ -19,7 +19,8 @@ Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
         nos_nao_cobertos.insert(no);
     }
 
-    Grafo *solucao = new Grafo();
+    int nos_max = grafo->ordem;
+    Grafo *solucao = new Grafo(nos_max);
 
     while (!nos_nao_cobertos.empty())
     {
@@ -70,11 +71,11 @@ Grafo *AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
 }
 
 /*
-@brief Implementa o algoritmo guloso randomizado para encontrar um conjunto dominante em um grafo.
-@param grafo Ponteiro para o grafo de entrada.
-@param alfa Fator de aleatoriedade (entre 0 e 1).
-@return Ponteiro para o grafo resultante contendo o conjunto dominante.
-*/
+ * @brief Implementa o algoritmo guloso randomizado para encontrar um conjunto dominante em um grafo.
+ * @param grafo Ponteiro para o grafo de entrada.
+ * @param alfa Fator de aleatoriedade (entre 0 e 1).
+ * @return Ponteiro para o grafo resultante contendo o conjunto dominante.
+ */
 
 Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alfa)
 {
@@ -86,7 +87,8 @@ Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alf
         nos_nao_cobertos.insert(no);
     }
 
-    Grafo *solucao = new Grafo();
+    int nos_max = grafo->ordem;
+    Grafo *solucao = new Grafo(nos_max);
 
     std::mt19937 gerador(std::chrono::system_clock::now().time_since_epoch().count());
 
@@ -148,6 +150,53 @@ Grafo *AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alf
     solucao->ordem = solucao->lista_adj.size();
 
     return solucao;
+}
+
+/**
+ * @brief Executa o algoritmo guloso randomizado 'n' vezes e retorna a melhor solução.
+ *
+ * Esta função atua como um invólucro para o algoritmo randomizado,
+ * executando-o múltiplas vezes para explorar diferentes caminhos de solução.
+ * A "melhor" solução é definida como aquela que possui o menor conjunto
+ * dominante (menor ordem do grafo de solução).
+ *
+ * @param grafo O grafo de entrada para o qual o conjunto dominante será encontrado.
+ * @param n_iteracoes O número de vezes que o algoritmo randomizado será executado.
+ * @param alfa O parâmetro de aleatoriedade (0 <= alfa <= 1) a ser usado em cada execução.
+ * @return Um ponteiro para o melhor objeto Grafo encontrado entre todas as iterações.
+ */
+Grafo* AlgoritmosGulosos::executar_randomizado_n_vezes(Grafo* grafo, int n_iteracoes, float alfa)
+{
+    Grafo* melhor_solucao_encontrada = nullptr;
+    int menor_tamanho = -1;
+
+    std::cout << "Executando o algoritmo randomizado " << n_iteracoes << " vezes com alfa=" << alfa << "..." << std::endl;
+
+    for (int i = 0; i < n_iteracoes; ++i)
+    {
+        Grafo* solucao_atual = conjunto_dominante_randomizado(grafo, alfa);
+
+        if (melhor_solucao_encontrada == nullptr || solucao_atual->ordem < menor_tamanho)
+        {
+            if (melhor_solucao_encontrada != nullptr)
+            {
+                delete melhor_solucao_encontrada;
+            }
+
+            melhor_solucao_encontrada = solucao_atual;
+            menor_tamanho = solucao_atual->ordem;
+
+            std::cout << "  Iteracao " << (i + 1) << ": Nova melhor solucao encontrada com tamanho " << menor_tamanho << std::endl;
+        }
+        else
+        {
+            delete solucao_atual;
+        }
+    }
+    
+    std::cout << "Execucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << menor_tamanho << std::endl;
+
+    return melhor_solucao_encontrada;
 }
 
 // --- Algoritmo Guloso Reativo ---
