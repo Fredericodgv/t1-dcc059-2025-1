@@ -304,7 +304,7 @@ bool comp_nos(No *a, No *b)
  * @param tamanho_bloco O tamanho do bloco para atualização de probabilidades no reativo.
  * @return Um ponteiro para o melhor objeto Grafo encontrado entre todas as execuções.
  */
-Grafo* AlgoritmosGulosos::executar_reativo_n_vezes(const Grafo* grafo, int n_execucoes, std::vector<float>& alfas, int iteracoes_reativo, int tamanho_bloco)
+Grafo* AlgoritmosGulosos::executar_reativo_n_vezes(Grafo* grafo, int n_execucoes, std::vector<float>& alfas, int iteracoes_reativo, int tamanho_bloco)
 {
     Grafo* melhor_solucao_encontrada = nullptr;
     int menor_tamanho = -1;
