@@ -320,7 +320,7 @@ void Gerenciador::comandos(Grafo *grafo)
     {
         // guloso reativo
         vector<float> alfas = {0.15, 0.30, 0.40, 0.50};
-        Grafo *resultante = AlgoritmosGulosos::conjunto_dominante_reativo(grafo, alfas, 1, 1);
+        Grafo* resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, 5, alfas, 20, 5);
         break;
     }
 

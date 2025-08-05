@@ -293,14 +293,62 @@ bool comp_nos(No *a, No *b)
         return false;
 }
 
-/*
-@brief Implementa o algoritmo guloso reativo para encontrar um conjunto dominante em um grafo.
-@param grafo Ponteiro para o grafo de entrada.
-@param alfas Vetor de fatores de aleatoriedade (entre 0 e 1).
-@param iteracoes Número de iterações a serem realizadas.
-@param tamanho_bloco Tamanho do bloco para recalcular as probabilidades.
-@return Ponteiro para o grafo resultante contendo o conjunto dominante.
-*/
+/**
+ * @brief Executa o algoritmo guloso reativo 'n' vezes e retorna a melhor solução.
+ *
+ *
+ * @param grafo O grafo de entrada.
+ * @param n_execucoes O número de vezes que o algoritmo reativo completo será executado.
+ * @param alfas O vetor de valores alfa a ser usado pelo algoritmo reativo.
+ * @param iteracoes_reativo O número de iterações INTERNAS do laço reativo.
+ * @param tamanho_bloco O tamanho do bloco para atualização de probabilidades no reativo.
+ * @return Um ponteiro para o melhor objeto Grafo encontrado entre todas as execuções.
+ */
+Grafo* AlgoritmosGulosos::executar_reativo_n_vezes(const Grafo* grafo, int n_execucoes, std::vector<float>& alfas, int iteracoes_reativo, int tamanho_bloco)
+{
+    Grafo* melhor_solucao_encontrada = nullptr;
+    int menor_tamanho = -1;
+
+    std::cout << "Executando o algoritmo REATIVO " << n_execucoes << " vezes..." << std::endl;
+
+    for (int i = 0; i < n_execucoes; ++i)
+    {
+        std::cout << "\n--- Execucao Reativa Principal " << (i + 1) << "/" << n_execucoes << " ---" << std::endl;
+        
+        Grafo* solucao_atual = conjunto_dominante_reativo(grafo, alfas, iteracoes_reativo, tamanho_bloco);
+
+        if (melhor_solucao_encontrada == nullptr || solucao_atual->ordem < menor_tamanho)
+        {
+            if (melhor_solucao_encontrada != nullptr)
+            {
+                delete melhor_solucao_encontrada;
+            }
+
+            melhor_solucao_encontrada = solucao_atual;
+            menor_tamanho = solucao_atual->ordem;
+
+            std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << menor_tamanho << std::endl;
+        }
+        else
+        {
+            std::cout << "  --> Solucao encontrada (" << solucao_atual->ordem << ") nao superou a melhor (" << menor_tamanho << "). Descartando." << std::endl;
+            delete solucao_atual;
+        }
+    }
+    
+    std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << menor_tamanho << std::endl;
+
+    return melhor_solucao_encontrada;
+}
+
+/**
+ * @brief Implementa o algoritmo guloso reativo para encontrar um conjunto dominante em um grafo.
+ * @param grafo Ponteiro para o grafo de entrada.
+ * @param alfas Vetor de fatores de aleatoriedade (entre 0 e 1).
+ * @param iteracoes Número de iterações a serem realizadas.
+ * @param tamanho_bloco Tamanho do bloco para recalcular as probabilidades.
+ * @return Ponteiro para o grafo resultante contendo o conjunto dominante.
+ */
 
 Grafo *AlgoritmosGulosos::conjunto_dominante_reativo(Grafo *grafo, vector<float> &alfas, int iteracoes, int tamanho_bloco)
 {
