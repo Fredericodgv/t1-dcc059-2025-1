@@ -302,30 +302,35 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'j':
     {
-        Grafo* resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
-        resultante->imprimir_lista_adjacencia();
-        
-        delete resultante;
+        vector<char> resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
+        cout << "Conjunto Dominante (Guloso): ";
+        imprimir_vector_tela(resultante);
+        cout << endl;
+
         break;
     }
     case 'k':
     {
         float alfa = 0.5f; // Valor padrão
-        Grafo* resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
+        vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
         // guloso randomizado
 
-        resultante->imprimir_lista_adjacencia();
+        cout << "Conjunto Dominante (Guloso Randomizado): ";
+        imprimir_vector_tela(resultante);
+        cout << endl;
 
-        delete resultante;
         break;
     }
     case 'l':
     {
         // guloso reativo
         vector<float> alfas = {0.15, 0.30, 0.40, 0.50};
-        Grafo* resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, 5, alfas, 20, 5);
+        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, 5, alfas, 20, 5);
 
-        delete resultante;
+        cout << "Conjunto Dominante (Guloso Reativo): ";
+        imprimir_vector_tela(resultante);
+        cout << endl;
+
         break;
     }
 
