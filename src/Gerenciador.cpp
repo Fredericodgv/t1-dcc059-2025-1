@@ -302,18 +302,21 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'j':
     {
-        AlgoritmosGulosos::conjunto_dominante(grafo);
+        Grafo* resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
+        resultante->imprimir_lista_adjacencia();
+        
+        delete resultante;
         break;
     }
     case 'k':
     {
         float alfa = 0.5f; // Valor padrão
-        Grafo* solucao = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
+        Grafo* resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, 10, alfa);
         // guloso randomizado
 
-        solucao->imprimir_lista_adjacencia();
+        resultante->imprimir_lista_adjacencia();
 
-        delete solucao;
+        delete resultante;
         break;
     }
     case 'l':
@@ -321,6 +324,8 @@ void Gerenciador::comandos(Grafo *grafo)
         // guloso reativo
         vector<float> alfas = {0.15, 0.30, 0.40, 0.50};
         Grafo* resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, 5, alfas, 20, 5);
+
+        delete resultante;
         break;
     }
 
