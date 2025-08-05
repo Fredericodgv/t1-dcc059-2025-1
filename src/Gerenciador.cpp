@@ -307,10 +307,16 @@ void Gerenciador::comandos(Grafo *grafo)
      */
     case 'j':
     {
+        auto start = std::chrono::high_resolution_clock::now();
+
         vector<char> resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, milli> duration = end - start;
+
         cout << "Conjunto Dominante (Guloso): ";
         imprimir_vector_tela(resultante);
-        cout << endl;
+        cout << "\nTempo de execucao: " << duration.count() << " milisegundos" << endl;
 
         break;
     }
@@ -336,11 +342,16 @@ void Gerenciador::comandos(Grafo *grafo)
             cin >> alfa;
         }
 
+        auto start = std::chrono::high_resolution_clock::now();
+
         vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, interacoes, alfa);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, milli> duration = end - start;
 
         cout << "Conjunto Dominante (Guloso Randomizado): ";
         imprimir_vector_tela(resultante);
-        cout << endl;
+        cout << "\nTempo de execucao: " << duration.count() << " milisegundos" << endl;
 
         break;
     }
@@ -360,10 +371,16 @@ void Gerenciador::comandos(Grafo *grafo)
 
         int tamanho_bloco = max(iteracoes_reativo / 10, 1);
 
+        auto start = std::chrono::high_resolution_clock::now();
+
         vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, milli> duration = end - start;
 
         cout << "Conjunto Dominante (Guloso Reativo): ";
         imprimir_vector_tela(resultante);
+        cout << "\nTempo de execucao: " << duration.count() << " milisegundos" << endl;
         cout << endl;
 
         break;
