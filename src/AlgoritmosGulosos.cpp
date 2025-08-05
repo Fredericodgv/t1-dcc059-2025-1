@@ -237,47 +237,6 @@
         return dist(gerador);
     }
 
-    void quicksort_nos(vector<No *> &vec, function<bool(No *, No *)> comp, int inicio, int fim)
-    {
-        if (inicio >= fim)
-            return;
-
-        No *pivo = vec[fim];
-        int idx = inicio;
-
-        for (int i = inicio; i < fim; i++)
-        {
-            if (comp(vec[i], pivo))
-            {
-                swap(vec[i], vec[idx]);
-                idx++;
-            }
-        }
-
-        swap(vec[idx], vec[fim]);
-
-        quicksort_nos(vec, comp, inicio, idx - 1);
-        quicksort_nos(vec, comp, idx + 1, fim);
-    }
-
-    void quicksort_nos(vector<No *> &vec, function<bool(No *, No *)> comp)
-    {
-        if (!vec.empty())
-        {
-            quicksort_nos(vec, comp, 0, vec.size() - 1);
-        }
-
-        auto it = find_if(vec.rbegin(), vec.rend(), [](No *no)
-                        { return no->dominante_conexo_nos_uteis.size() != 0; });
-
-        auto cvt_it = it.base();
-        if (cvt_it != vec.end())
-        {
-            // Apaga do zero até o fim
-            vec.erase(cvt_it, vec.end());
-        }
-    }
-
     bool comp_nos(No *a, No *b)
     {
         if (a->dominante_conexo_nos_uteis.size() > b->dominante_conexo_nos_uteis.size())
@@ -300,7 +259,6 @@
     std::vector<char> AlgoritmosGulosos::executar_reativo_n_vezes(Grafo* grafo, int n_execucoes, std::vector<float>& alfas, int iteracoes_reativo, int tamanho_bloco)
     {
         std::vector<char> melhor_solucao_encontrada;
-        int menor_tamanho = -1;
 
         std::cout << "Executando o algoritmo REATIVO " << n_execucoes << " vezes..." << std::endl;
 
@@ -314,16 +272,16 @@
             {
                 melhor_solucao_encontrada = solucao_atual;
 
-                std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << menor_tamanho << std::endl;
+                std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << melhor_solucao_encontrada.size() << std::endl;
             }
             else
             {
-                std::cout << "  --> Solucao encontrada (" << solucao_atual.size() << ") nao superou a melhor (" << menor_tamanho << "). Descartando." << std::endl;
+                std::cout << "  --> Solucao encontrada (" << solucao_atual.size() << ") nao superou a melhor (" << melhor_solucao_encontrada.size() << "). Descartando." << std::endl;
                 solucao_atual.clear();
             }
         }
-        
-        std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << menor_tamanho << std::endl;
+
+        std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << melhor_solucao_encontrada.size() << std::endl;
 
         return melhor_solucao_encontrada;
     }
@@ -344,95 +302,38 @@
         cout << p_inicial << endl;
         vector<float> probabilidades(m, p_inicial);
         vector<float> medias(m, 0);
-        float melhor_qualidade = 0;
-
-        vector<No *> &lista_adj = grafo->lista_adj;
-
-        // Inicializando
+        vector<int> quantidade_usos_alfas(m, 0); 
+        std::vector<char> melhor_solucao_geral; 
+        float melhor_qualidade = 0.0f;
 
         for (int i = 0; i < iteracoes; i++)
         {
-            vector<No *> nos_candidatos(0);
-            vector<No *> nos_solucao(0);
-            int nos_envolvidos = 1;
-            int nos_dominantes = 0;
             mt19937 gerador(chrono::system_clock::now().time_since_epoch().count());
-
-            if (i % tamanho_bloco == 0) // controla número de iterações antes de recalcular
-            {
-                aux_calcula_probabilidades(probabilidades, medias, m, melhor_qualidade); // recalcula chances
-            }
-
+            
             int idx_alfa = aux_escolhe_idx_alfa(gerador, probabilidades, m);
-            float alfa = alfas[idx_alfa];
+            float alfa_escolhido = alfas[idx_alfa]; 
             cout << "idc: " << idx_alfa << endl;
-            cout << "alfa: " << alfas[0] << endl;
-            // Inicializando
-            for (No *no : lista_adj)
+            cout << "alfa: " << alfa_escolhido << endl;
+
+            std::vector<char> solucao_nesta_iteracao = conjunto_dominante_randomizado(grafo, alfa_escolhido); // Corrigido para usar 'alfa'
+
+            if (solucao_nesta_iteracao.empty())
             {
-                no->dominante_conexo_candidato = false;
-                no->dominante_conexo_dominante = false;
-                for (Aresta *aresta : no->arestas)
-                {
-                    no->dominante_conexo_nos_uteis.push_back(aresta->id_no_alvo);
-                }
-                nos_candidatos.push_back(no);
+                cout << "Nenhum no encontrado na iteracao " << i + 1 << ". Descartando." << std::endl;
+                continue;
             }
+            
+            float qualidade_atual = 1.0f / static_cast<float>(solucao_nesta_iteracao.size());
 
-            // ordenando todos os nós para pegar um aleatório e começar o algoritmo
-            quicksort_nos(nos_candidatos, comp_nos);
-            // sorteando
-            int idx_no_inicial = aux_gerar_indice_alfa(gerador, 0, nos_candidatos.size() - 1, alfa);
-            cout << "gerou indice: " << idx_no_inicial << endl;
-            No *no_inicial = nos_candidatos[idx_no_inicial];
-            no_inicial->dominante_conexo_candidato = true;
-            nos_candidatos.resize(0);
-            nos_candidatos.push_back(no_inicial);
-
-            while ((nos_envolvidos < lista_adj.size()) && nos_candidatos.size() != 0)
+            medias[idx_alfa] = (medias[idx_alfa] * quantidade_usos_alfas[idx_alfa] + qualidade_atual) / (quantidade_usos_alfas[idx_alfa] + 1);
+            quantidade_usos_alfas[idx_alfa]++;
+            
+            if(melhor_solucao_geral.empty() || solucao_nesta_iteracao.size() < melhor_solucao_geral.size())
             {
-                No *novo_dominante = new No();
-                int idx_aleat = aux_gerar_indice_alfa(gerador, 0, nos_candidatos.size() - 1, alfa);
-                cout << "idx: " << idx_aleat << endl;
-                novo_dominante = nos_candidatos[idx_aleat];
-                novo_dominante->dominante_conexo_dominante = true;
-                novo_dominante->dominante_conexo_nos_uteis.resize(0);
-                cout << "adicionou no: " << novo_dominante->id << endl;
-                nos_dominantes++;
-
-                for (Aresta *aresta : novo_dominante->arestas)
-                {
-                    char indice_no_alvo = aresta->id_no_alvo;
-                    No *no_alvo = grafo->get_no(indice_no_alvo);
-
-                    no_alvo->remover_no_util(novo_dominante->id); // diminui o grau útil do nó
-                    if (!no_alvo->dominante_conexo_candidato)
-                    {
-                        nos_candidatos.push_back(no_alvo);
-                        cout << "candidato: " << no_alvo->id << endl;
-                        no_alvo->dominante_conexo_candidato = true;
-
-                        nos_envolvidos++;
-                        for (Aresta *aresta : no_alvo->arestas)
-                        {
-                            char indice_no_alvo = aresta->id_no_alvo;
-                            No *no = grafo->get_no(indice_no_alvo);
-                            no->remover_no_util(no_alvo->id);
-                        }
-                    }
-                }
-                // ordenando candidatos(nós já adicionados vão pro final)
-                quicksort_nos(nos_candidatos, comp_nos);
-
-                for (No *no : nos_candidatos)
-                {
-                    cout << no->dominante_conexo_nos_uteis.size() << " ";
-                }
-                cout << endl;
-            }
-
-            cout << "nos dominantes: " << nos_dominantes << endl;
+                melhor_solucao_geral = solucao_nesta_iteracao;
+                melhor_qualidade = 1.0f / static_cast<float>(melhor_solucao_geral.size());
+            }        
         }
-        std::vector<char> solucao; //temporario
-        return solucao;
+
+        return melhor_solucao_geral;
     }
