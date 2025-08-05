@@ -18,7 +18,7 @@ using namespace std;
 class Grafo
 {
 public:
-    Grafo();
+    Grafo(int ordem = 0);
     Grafo(int ordem, bool direcionado, bool ponderado_aresta, bool ponderado_vertice);
     ~Grafo();
 

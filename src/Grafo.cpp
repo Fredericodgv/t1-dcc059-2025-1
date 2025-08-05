@@ -1,8 +1,8 @@
 #include "Grafo.h"
 
-Grafo::Grafo()
+Grafo::Grafo(int ordem)
 {
-    ordem = 0;
+    this->ordem = ordem;
     in_direcionado = false;
     in_ponderado_aresta = false;
     in_ponderado_vertice = false;
