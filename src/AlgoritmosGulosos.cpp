@@ -11,38 +11,59 @@
  * @return Ponteiro para o grafo resultante contendo o conjunto dominante.
  */
 
-std::vector<char> AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
+std::vector<char> AlgoritmosGulosos::conjunto_dominante_conexo(Grafo *grafo)
 {
+    if (grafo->lista_adj.empty())
+        return {};
+
     std::set<No *> nos_nao_cobertos;
     for (No *no : grafo->lista_adj)
     {
-        nos_nao_cobertos.insert(no);
+        if (no)
+            nos_nao_cobertos.insert(no);
     }
 
-    int nos_max = grafo->ordem;
     std::vector<char> solucao;
+    std::set<No *> candidatos;
 
-    while (!nos_nao_cobertos.empty())
+    No *no_inicial = nullptr;
+    int max_grau = -1;
+    for (No *no : grafo->lista_adj)
+    {
+        if (no && (int)no->arestas.size() > max_grau)
+        {
+            max_grau = no->arestas.size();
+            no_inicial = no;
+        }
+    }
+
+    if (!no_inicial)
+        return {};
+
+    solucao.push_back(no_inicial->id);
+    nos_nao_cobertos.erase(no_inicial);
+    for (Aresta *aresta : no_inicial->arestas)
+    {
+        No *vizinho = grafo->get_no(aresta->id_no_alvo);
+        nos_nao_cobertos.erase(vizinho);
+        if (vizinho)
+            candidatos.insert(vizinho);
+    }
+
+    while (!nos_nao_cobertos.empty() && !candidatos.empty())
     {
         No *melhor_no_candidato = nullptr;
         int max_cobertura = -1;
 
-        for (No *no_candidato : grafo->lista_adj)
+        for (No *no_candidato : candidatos)
         {
             int cobertura_atual = 0;
-
             if (nos_nao_cobertos.count(no_candidato))
-            {
                 cobertura_atual++;
-            }
-
             for (Aresta *aresta : no_candidato->arestas)
             {
-                No *vizinho = grafo->get_no(aresta->id_no_alvo);
-                if (nos_nao_cobertos.count(vizinho))
-                {
+                if (nos_nao_cobertos.count(grafo->get_no(aresta->id_no_alvo)))
                     cobertura_atual++;
-                }
             }
 
             if (cobertura_atual > max_cobertura)
@@ -52,21 +73,25 @@ std::vector<char> AlgoritmosGulosos::conjunto_dominante(Grafo *grafo)
             }
         }
 
-        if (melhor_no_candidato != nullptr)
-        {
-            solucao.push_back(melhor_no_candidato->id);
+        if (!melhor_no_candidato || max_cobertura == 0)
+            break;
 
-            nos_nao_cobertos.erase(melhor_no_candidato);
-            for (Aresta *aresta : melhor_no_candidato->arestas)
+        solucao.push_back(melhor_no_candidato->id);
+        candidatos.erase(melhor_no_candidato);
+        nos_nao_cobertos.erase(melhor_no_candidato);
+
+        for (Aresta *aresta : melhor_no_candidato->arestas)
+        {
+            No *vizinho = grafo->get_no(aresta->id_no_alvo);
+            nos_nao_cobertos.erase(vizinho);
+
+            bool na_solucao = (std::find(solucao.begin(), solucao.end(), vizinho->id) != solucao.end());
+            if (vizinho && !na_solucao)
             {
-                No *vizinho = grafo->get_no(aresta->id_no_alvo);
-                nos_nao_cobertos.erase(vizinho);
+                candidatos.insert(vizinho);
             }
         }
     }
-
-    solucao.resize(solucao.size());
-
     return solucao;
 }
 
