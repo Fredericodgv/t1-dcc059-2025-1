@@ -309,7 +309,7 @@ void Gerenciador::comandos(Grafo *grafo)
     {
         auto start = std::chrono::high_resolution_clock::now();
 
-        vector<char> resultante = AlgoritmosGulosos::conjunto_dominante(grafo);
+        vector<char> resultante = AlgoritmosGulosos::conjunto_dominante_conexo(grafo);
 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, milli> duration = end - start;
