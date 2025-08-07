@@ -105,75 +105,112 @@ std::vector<char> AlgoritmosGulosos::conjunto_dominante_conexo(Grafo *grafo)
 std::vector<char> AlgoritmosGulosos::conjunto_dominante_randomizado(Grafo *grafo, float alfa)
 {
     alfa = std::max(0.0f, std::min(1.0f, alfa));
+    if (grafo->lista_adj.empty())
+        return {};
 
     std::set<No *> nos_nao_cobertos;
     for (No *no : grafo->lista_adj)
     {
-        nos_nao_cobertos.insert(no);
+        if (no)
+            nos_nao_cobertos.insert(no);
     }
 
-    int nos_max = grafo->ordem;
     std::vector<char> solucao;
-
+    std::set<No *> candidatos;
     std::mt19937 gerador(std::chrono::system_clock::now().time_since_epoch().count());
 
-    while (!nos_nao_cobertos.empty())
+    // Cria lista para selecionar o nó inicial
+    std::vector<std::pair<No *, int>> candidatos_iniciais;
+    for (No *no : grafo->lista_adj)
+    {
+        if (no)
+        {
+            candidatos_iniciais.push_back({no, (int)no->arestas.size()});
+        }
+    }
+
+    // Ordena candidatos iniciais por grau
+    std::sort(candidatos_iniciais.begin(), candidatos_iniciais.end(),
+              [](const auto &a, const auto &b)
+              { return a.second > b.second; });
+
+    // Seleciona o nó inicial aleatoriamente
+    int tamanho_lcr_inicial = static_cast<int>(std::ceil(alfa * candidatos_iniciais.size()));
+    tamanho_lcr_inicial = std::max(1, tamanho_lcr_inicial);
+    tamanho_lcr_inicial = std::min(tamanho_lcr_inicial, (int)candidatos_iniciais.size());
+
+    // Seleciona um nó inicial aleatório entre os candidatos iniciais
+    std::uniform_int_distribution<> dist_inicial(0, tamanho_lcr_inicial - 1);
+    No *no_inicial = candidatos_iniciais[dist_inicial(gerador)].first;
+
+    // Adiciona o nó inicial à solução
+    solucao.push_back(no_inicial->id);
+    nos_nao_cobertos.erase(no_inicial);
+
+    // Adiciona os vizinhos do nó inicial aos candidatos e remove eles dos não cobertos
+    for (Aresta *aresta : no_inicial->arestas)
+    {
+        No *vizinho = grafo->get_no(aresta->id_no_alvo);
+        nos_nao_cobertos.erase(vizinho);
+        if (vizinho)
+            candidatos.insert(vizinho);
+    }
+
+    // Enquanto houver nós não cobertos e candidatos disponíveis
+    while (!nos_nao_cobertos.empty() && !candidatos.empty())
     {
         std::vector<std::pair<No *, int>> candidatos_com_utilidade;
 
-        for (No *no_candidato : grafo->lista_adj)
+        // Calcula a utilidade de cada candidato
+        for (No *no_candidato : candidatos)
         {
             int cobertura_atual = 0;
             if (nos_nao_cobertos.count(no_candidato))
-            {
                 cobertura_atual++;
-            }
             for (Aresta *aresta : no_candidato->arestas)
             {
-                No *vizinho = grafo->get_no(aresta->id_no_alvo);
-                if (nos_nao_cobertos.count(vizinho))
-                {
+                if (nos_nao_cobertos.count(grafo->get_no(aresta->id_no_alvo)))
                     cobertura_atual++;
-                }
             }
-
             if (cobertura_atual > 0)
             {
                 candidatos_com_utilidade.push_back({no_candidato, cobertura_atual});
             }
         }
 
+        // Se não houver candidatos com utilidade, sai do loop
         if (candidatos_com_utilidade.empty())
-        {
             break;
-        }
 
+        // Ordena candidatos por utilidade
         std::sort(candidatos_com_utilidade.begin(), candidatos_com_utilidade.end(),
                   [](const auto &a, const auto &b)
-                  {
-                      return a.second > b.second;
-                  });
+                  { return a.second > b.second; });
 
+        // Seleciona um candidato aleatório baseado na utilidade
         int tamanho_lcr = static_cast<int>(std::ceil(alfa * candidatos_com_utilidade.size()));
         tamanho_lcr = std::max(1, tamanho_lcr);
         tamanho_lcr = std::min(tamanho_lcr, (int)candidatos_com_utilidade.size());
 
         std::uniform_int_distribution<> dist(0, tamanho_lcr - 1);
-        int idx_aleatorio = dist(gerador);
-        No *no_escolhido = candidatos_com_utilidade[idx_aleatorio].first;
+        No *no_escolhido = candidatos_com_utilidade[dist(gerador)].first;
 
+        // Adiciona o nó escolhido à solução
         solucao.push_back(no_escolhido->id);
-
+        candidatos.erase(no_escolhido);
         nos_nao_cobertos.erase(no_escolhido);
         for (Aresta *aresta : no_escolhido->arestas)
         {
             No *vizinho = grafo->get_no(aresta->id_no_alvo);
             nos_nao_cobertos.erase(vizinho);
+
+            bool na_solucao = (std::find(solucao.begin(), solucao.end(), vizinho->id) != solucao.end());
+            if (vizinho && !na_solucao)
+            {
+                candidatos.insert(vizinho);
+            }
         }
     }
-
-    solucao.resize(solucao.size());
-
     return solucao;
 }
 
