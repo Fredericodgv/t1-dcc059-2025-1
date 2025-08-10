@@ -328,8 +328,8 @@ void Gerenciador::comandos(Grafo *grafo)
     case 'k':
     {
         float alfa;
-
         int interacoes;
+
         cout << "Digite o numero de iteracoes: " << endl;
         cin >> interacoes;
 
@@ -342,16 +342,42 @@ void Gerenciador::comandos(Grafo *grafo)
             cin >> alfa;
         }
 
-        auto start = std::chrono::high_resolution_clock::now();
+        const int execucoes = 10;
 
-        vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, interacoes, alfa);
+        vector<int> tamanhos_resultados;
+        vector<double> tempos_execucao;
+        vector<char> melhor_solucao;
+        int melhor_tamanho = INT_MAX;
 
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, milli> duration = end - start;
+        for (int i = 0; i < execucoes; i++) {
 
-        cout << "Conjunto Dominante (Guloso Randomizado): ";
-        imprimir_vector_tela(resultante);
-        cout << "\nTempo de execucao: " << duration.count() << " milisegundos" << endl;
+            auto start = std::chrono::high_resolution_clock::now();
+
+            vector<char> resultante = AlgoritmosGulosos::executar_randomizado_n_vezes(grafo, interacoes, alfa);
+
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, milli> duration = end - start;
+
+            tamanhos_resultados.push_back(resultante.size());
+            tempos_execucao.push_back(duration.count());
+
+            if ((int)resultante.size() < melhor_tamanho) {
+
+                melhor_tamanho = (int)resultante.size();
+                melhor_solucao = resultante;
+            }
+        }
+
+        double tamanho_medio = accumulate(tamanhos_resultados.begin(), tamanhos_resultados.end(), 0.0) / execucoes;
+        double tempo_medio = accumulate(tempos_execucao.begin(), tempos_execucao.end(), 0.0) / execucoes;
+
+        cout << "Resultados do Algoritmo Randomizado (10 execucoes):\n";
+        cout << "Melhor solucao (tamanho): " << melhor_tamanho << " vertices\n";
+        cout << "Melhor solucao (conjunto dominante): ";
+        imprimir_vector_tela(melhor_solucao);  // imprime o vetor da melhor solução
+
+        cout << "Media das solucoes: " << tamanho_medio << " vertices\n";
+        cout << "Tempo medio de execucao: " << tempo_medio / 1000.0 << " segundos\n" << endl;
 
         break;
     }
@@ -362,26 +388,53 @@ void Gerenciador::comandos(Grafo *grafo)
      */
     case 'l':
     {
-        vector<float> alfas = {0.05f, 0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.70f};
+        vector<float> alfas = {0.10f, 0.30f, 0.50f};
         int iteracoes, iteracoes_reativo;
+
         cout << "Digite o numero de iteracoes: " << endl;
         cin >> iteracoes;
+
         cout << "Digite o numero de iteracoes reativo: " << endl;
         cin >> iteracoes_reativo;
 
         int tamanho_bloco = max(iteracoes_reativo / 10, 1);
 
-        auto start = std::chrono::high_resolution_clock::now();
+        const int execucoes = 10;
 
-        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
+        vector<int> tamanhos_resultados;
+        vector<double> tempos_execucao;
+        vector<char> melhor_solucao;
+        int melhor_tamanho = INT_MAX;
 
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, milli> duration = end - start;
+        for (int i = 0; i < execucoes; i++) {
 
-        cout << "Conjunto Dominante (Guloso Reativo): ";
-        imprimir_vector_tela(resultante);
-        cout << "\nTempo de execucao: " << duration.count() << " milisegundos" << endl;
-        cout << endl;
+            auto start = std::chrono::high_resolution_clock::now();
+
+            vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
+
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, milli> duration = end - start;
+
+            tamanhos_resultados.push_back(resultante.size());
+            tempos_execucao.push_back(duration.count());
+
+            if ((int)resultante.size() < melhor_tamanho) {
+
+                melhor_tamanho = (int)resultante.size();
+                melhor_solucao = resultante;
+            }
+        }
+
+        double tamanho_medio = accumulate(tamanhos_resultados.begin(), tamanhos_resultados.end(), 0.0) / execucoes;
+        double tempo_medio = accumulate(tempos_execucao.begin(), tempos_execucao.end(), 0.0) / execucoes;
+
+        cout << "Resultados do Algoritmo Reativo (10 execucoes):\n";
+        cout << "Melhor solucao (tamanho): " << melhor_tamanho << " vertices\n";
+        cout << "Melhor solucao (conjunto dominante): ";
+        imprimir_vector_tela(melhor_solucao);  // imprime o vetor da melhor solução
+
+        cout << "Media das solucoes: " << tamanho_medio << " vertices\n";
+        cout << "Tempo medio de execucao: " << tempo_medio / 1000.0 << " segundos\n" << endl;
 
         break;
     }
