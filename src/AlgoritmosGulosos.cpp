@@ -231,7 +231,7 @@ std::vector<char> AlgoritmosGulosos::executar_randomizado_n_vezes(Grafo *grafo, 
 
     for (int i = 0; i < n_iteracoes; ++i)
     {
-        std::cout << "\n--- Execucao Randomizada Principal " << (i + 1) << "/" << n_iteracoes << " ---" << std::endl;
+        // std::cout << "\n--- Execucao Randomizada Principal " << (i + 1) << "/" << n_iteracoes << " ---" << std::endl;
 
         std::vector<char> solucao_atual = conjunto_dominante_randomizado(grafo, alfa);
 
@@ -239,22 +239,22 @@ std::vector<char> AlgoritmosGulosos::executar_randomizado_n_vezes(Grafo *grafo, 
         {
             melhor_solucao_encontrada = solucao_atual;
 
-            std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << melhor_solucao_encontrada.size() << std::endl;
+            // std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << melhor_solucao_encontrada.size() << std::endl;
         }
         else
         {
-            std::cout << "  --> Solucao encontrada (" << solucao_atual.size()
-                      << ") nao superou a melhor (" << melhor_solucao_encontrada.size() << "). Descartando." << std::endl;
+            // std::cout << "  --> Solucao encontrada (" << solucao_atual.size()
+            //           << ") nao superou a melhor (" << melhor_solucao_encontrada.size() << "). Descartando." << std::endl;
         }
     }
 
     if (!melhor_solucao_encontrada.empty())
     {
-        std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << melhor_solucao_encontrada.size() << std::endl;
+        // std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << melhor_solucao_encontrada.size() << std::endl;
     }
     else
     {
-        std::cout << "\nExecucao finalizada. Nenhuma solucao valida foi encontrada." << std::endl;
+        // std::cout << "\nExecucao finalizada. Nenhuma solucao valida foi encontrada." << std::endl;
     }
 
     return melhor_solucao_encontrada;
@@ -355,29 +355,32 @@ bool comp_nos(No *a, No *b)
 std::vector<char> AlgoritmosGulosos::executar_reativo_n_vezes(Grafo *grafo, int n_execucoes, std::vector<float> &alfas, int iteracoes_reativo, int tamanho_bloco)
 {
     std::vector<char> melhor_solucao_encontrada;
+    double media_solucoes = 0.0;
 
     std::cout << "Executando o algoritmo REATIVO " << n_execucoes << " vezes..." << std::endl;
 
     for (int i = 0; i < n_execucoes; ++i)
     {
-        std::cout << "\n--- Execucao Reativa Principal " << (i + 1) << "/" << n_execucoes << " ---" << std::endl;
+        // std::cout << "\n--- Execucao Reativa Principal " << (i + 1) << "/" << n_execucoes << " ---" << std::endl;
 
         std::vector<char> solucao_atual = conjunto_dominante_reativo(grafo, alfas, iteracoes_reativo, tamanho_bloco);
+        media_solucoes += solucao_atual.size()*1.0;
 
         if (melhor_solucao_encontrada.empty() || solucao_atual.size() < melhor_solucao_encontrada.size())
         {
             melhor_solucao_encontrada = solucao_atual;
 
-            std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << melhor_solucao_encontrada.size() << std::endl;
+            // std::cout << "  --> Nova melhor solucao geral encontrada com tamanho " << melhor_solucao_encontrada.size() << std::endl;
         }
         else
         {
-            std::cout << "  --> Solucao encontrada (" << solucao_atual.size() << ") nao superou a melhor (" << melhor_solucao_encontrada.size() << "). Descartando." << std::endl;
+            // std::cout << "  --> Solucao encontrada (" << solucao_atual.size() << ") nao superou a melhor (" << melhor_solucao_encontrada.size() << "). Descartando." << std::endl;
             solucao_atual.clear();
         }
     }
 
-    std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << melhor_solucao_encontrada.size() << std::endl;
+    // std::cout << "\nExecucao finalizada. Melhor tamanho de conjunto dominante encontrado: " << melhor_solucao_encontrada.size() << std::endl;
+    std::cout << "\nMedia de solucoes: " << media_solucoes / n_execucoes << std::endl;
 
     return melhor_solucao_encontrada;
 }

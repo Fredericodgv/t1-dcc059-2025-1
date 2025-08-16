@@ -377,7 +377,7 @@ void Gerenciador::comandos(Grafo *grafo)
         imprimir_vector_tela(melhor_solucao);  // imprime o vetor da melhor solução
 
         cout << "Media das solucoes: " << tamanho_medio << " vertices\n";
-        cout << "Tempo medio de execucao: " << tempo_medio / 1000.0 << " segundos\n" << endl;
+        cout << "Tempo medio de execucao: " << tempo_medio << " milisegundos\n" << endl;
 
         break;
     }
@@ -399,42 +399,17 @@ void Gerenciador::comandos(Grafo *grafo)
 
         int tamanho_bloco = max(iteracoes_reativo / 10, 1);
 
-        const int execucoes = 10;
+        auto start = std::chrono::high_resolution_clock::now();
 
-        vector<int> tamanhos_resultados;
-        vector<double> tempos_execucao;
-        vector<char> melhor_solucao;
-        int melhor_tamanho = INT_MAX;
+        vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
 
-        for (int i = 0; i < execucoes; i++) {
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, milli> duration = end - start;
 
-            auto start = std::chrono::high_resolution_clock::now();
-
-            vector<char> resultante = AlgoritmosGulosos::executar_reativo_n_vezes(grafo, iteracoes, alfas, iteracoes_reativo, tamanho_bloco);
-
-            auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double, milli> duration = end - start;
-
-            tamanhos_resultados.push_back(resultante.size());
-            tempos_execucao.push_back(duration.count());
-
-            if ((int)resultante.size() < melhor_tamanho) {
-
-                melhor_tamanho = (int)resultante.size();
-                melhor_solucao = resultante;
-            }
-        }
-
-        double tamanho_medio = accumulate(tamanhos_resultados.begin(), tamanhos_resultados.end(), 0.0) / execucoes;
-        double tempo_medio = accumulate(tempos_execucao.begin(), tempos_execucao.end(), 0.0) / execucoes;
-
-        cout << "Resultados do Algoritmo Reativo (10 execucoes):\n";
-        cout << "Melhor solucao (tamanho): " << melhor_tamanho << " vertices\n";
-        cout << "Melhor solucao (conjunto dominante): ";
-        imprimir_vector_tela(melhor_solucao);  // imprime o vetor da melhor solução
-
-        cout << "Media das solucoes: " << tamanho_medio << " vertices\n";
-        cout << "Tempo medio de execucao: " << tempo_medio / 1000.0 << " segundos\n" << endl;
+        cout << "Conjunto Dominante (Guloso Reativo): ";
+        imprimir_vector_tela(resultante);
+        cout << "\nTempo de execucao: " << duration.count() / 10.0 << " milisegundos" << endl;
+        cout << endl;
 
         break;
     }
